@@ -1,0 +1,82 @@
+/* global styles */
+
+body {
+    background-color: lightgray;
+}
+
+/* typography */
+
+.title-div {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    position: fixed;
+    font-size: 200%;
+    left: 50%;
+    transform: translate(-50%);
+    text-align: center;
+}
+
+.title-h1 {
+    color: red;
+    -webkit-text-stroke: 2px black;
+}
+
+.signature-h2 {
+    font-size: 100%;
+}
+
+.title-h2 {
+    z-index: 1;
+    padding: 10px;
+    position: relative;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 175%;
+    position: fixed;
+    color: red;
+    -webkit-text-stroke: 2px black;
+}
+
+/* components */
+
+.stonks-button {
+    background-color: #818589;
+    color: black;
+    font-size: 16px;
+    border: 2px solid;
+    border-radius: 8px;
+    padding: 30px;
+    width: 200px;
+    height: 80px;
+    margin: auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.stonks-button:hover {
+    font-weight: bold;  
+    position: absolute;
+    background-image: url(../images/plot-button.jpeg);
+    background-size: 200px;
+    background-position: 10px, -10px;
+    cursor: pointer;
+}
+
+
+.graph {
+    bottom: 0px;
+    position: fixed;
+    width: 80vw;
+    transform: translate(-1%,2px);
+
+}
+
+.side-menu {
+    background-color: #818589;
+    position: fixed;
+    height: 100vh;
+    width: 22vw;
+    right: -1px;
+
+}
+

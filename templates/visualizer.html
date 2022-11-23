@@ -1,0 +1,33 @@
+<html>
+    <head>
+
+        <title>Stock Graph Visualizer</title>
+
+        <link rel="stylesheet" type="text/css" href="../static/stylesheets/style.css">
+
+    </head>
+
+    <body class="stocks-body">
+
+        <div class="graph">
+            {% include 'mygraph.html' %}
+        </div>
+
+        <h2 class="title-h2"> STONKS </h2>
+
+        <div class="side-menu">   
+            <h2 class="ticker-h2"> Stock Ticker (DOESNT WORK RN) </h2>
+                <div class="input"> 
+                    <label for="">Ticker:</label>
+                    <input type="text" id="pe" name="pe"><br><br>
+                    <input type="submit" value="Submit">
+                </div>
+            
+            <!-- ADD IF TICKER STATEMENTS :: DISPLAY INFO -->
+            <div class="info">
+                <h3> {{ticker}} Info: </h3>
+            </div>
+        </div>
+    
+    </body>
+</html>
