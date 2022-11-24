@@ -35,6 +35,11 @@ body {
     -webkit-text-stroke: 2px black;
 }
 
+.ticker-h2 {
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
 /* components */
 
 .stonks-button {
@@ -62,21 +67,55 @@ body {
     cursor: pointer;
 }
 
+.ticker-text-input {
+    width: 100%;
+    border: 2px solid #4b5560;
+    border-radius: 4px;
+    padding: 8px;
+    margin: 4px 0;
+    outline: none;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
 
-.graph {
+.ticker-text-input:focus {
+    border-color: red;
+    box-shadow: 0 0 8px 0 red;
+}
+
+.ticker-submit-input {
+    margin: 8px 0;
+}
+
+/* sections */
+
+.graph-div {
     bottom: 0px;
     position: fixed;
     width: 80vw;
-    transform: translate(-1%,2px);
+    transform: translate(-2px,2px);
 
 }
 
-.side-menu {
-    background-color: #818589;
+.side-menu-div {    
+    background-color: #848884;
     position: fixed;
     height: 100vh;
     width: 22vw;
-    right: -1px;
+    right: 0;
+    padding: 20px;
 
 }
+
+.info-div {
+    background-color: white;
+    height: 80%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 2px solid #4b5560;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+
 

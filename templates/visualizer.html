@@ -9,23 +9,30 @@
 
     <body class="stocks-body">
 
-        <div class="graph">
+        <div class="graph-div">
             {% include 'mygraph.html' %}
         </div>
 
+
         <h2 class="title-h2"> STONKS </h2>
 
-        <div class="side-menu">   
-            <h2 class="ticker-h2"> Stock Ticker (DOESNT WORK RN) </h2>
-                <div class="input"> 
-                    <label for="">Ticker:</label>
-                    <input type="text" id="pe" name="pe"><br><br>
-                    <input type="submit" value="Submit">
+        <div class="side-menu-div">   
+            <h2 class="ticker-h2"> Stock Ticker </h2>
+                <div class="input-div"> 
+                    <input class="ticker-text-input" type="text" id="ticker" name="ticker" placeholder="e.g. 'APPL'">
+                    <input class="ticker-submit-input" type="submit" value="Submit">
                 </div>
             
             <!-- ADD IF TICKER STATEMENTS :: DISPLAY INFO -->
-            <div class="info">
-                <h3> {{ticker}} Info: </h3>
+            <div class="info-div">
+                <h2 class="info-h2"> {{ ticker }} Info: </h2>
+                    <h3 class="info-h3"> Price: {{ price }}</h3>
+                    <h3 class="info-h3"> P/E: {{ pe }}</h3>
+                    <h3 class="info-h3"> Volume: {{ volume }}</h3>
+                    <h3 class="info-h3"> Market Cap: {{ mCap }}</h3>
+                    <h3 class="info-h3"> More? </h3>
+                    
+
             </div>
         </div>
     
