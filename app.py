@@ -3,21 +3,44 @@
 RUN THIS FILE TO HOST ON LOCAL HOST WITH DEBUGGER
 
 """
+import os
 from flask import Flask, render_template, request
 
-app = Flask(__name__)
+def create_app(test_config=None):
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(
+        SECRET_KEY="dev",
+        DATABASE=os.path.join(app.instance_path, "flaskr.sqlite")
+    )
 
-# routes to index page
-@app.route("/")
-@app.route("/home")
+    if test_config is None:
+        # load the instance config, if it exists, when not testing
+        app.config.from_pyfile('config.py', silent=True)
+    else:
+        # load the test config if passed in
+        app.config.from_mapping(test_config)
 
-def home():
-    return render_template("index.html")
+    # ensure the instance folder exists
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
 
-# route to visualizer page
-@app.route("/visualizer")
-def visualizer():
-    return render_template("visualizer.html")
+    # routes to index page
+    @app.route("/")
+    @app.route("/home")
+
+    def home():
+        return render_template("index.html")
+
+    # route to visualizer page
+    @app.route("/visualizer")
+    def visualizer():
+        return render_template("visualizer.html")
+
+    return app
+
+app = create_app()
 
 # hosts files on localhost
 if __name__ == "__main__":
