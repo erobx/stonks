@@ -24,8 +24,8 @@ def main():
 
 
     # generates html file of graph visualizer to respective directory
-    net.generate_html('./templates/mygraph.html')
-    net.write_html('./templates/mygraph.html')
+    net.generate_html('./stonks/templates/mygraph.html')
+    net.write_html('./stonks/templates/mygraph.html')
 
 
 if __name__ == "__main__":

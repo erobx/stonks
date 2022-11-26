@@ -1,0 +1,6 @@
+include LICENSE.rst
+include stonks/schema.sql
+graft stonks/static
+graft stonks/templates
+graft tests
+global-exclude *.pyc
