@@ -4,3 +4,4 @@ venv/
 stonks/__pycache__
 instance/
 __pycache__/
+.DS_STORE
