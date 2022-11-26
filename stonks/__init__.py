@@ -23,6 +23,11 @@ def create_app(test_config=None):
     def visualizer():
         return render_template("visualizer.html")
 
-    
+    #from stonks import db
+    #db.init_app(app)
+
+    from stonks import net
+    net.init_network()
+
     return app
 

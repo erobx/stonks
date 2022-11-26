@@ -1,15 +1,8 @@
-"""
-
-RUN THIS FILE TO GENERATE HTML FILE OF THE VISUALIZER
-
-"""
 from pyvis.network import Network
+import os.path
 
-def main():
-
-    # creates graph with settings
-    # net = Network(height= "110vh", bgcolor="#1c77ac")
-    net = Network(height= "110vh")
+def init_network():
+    net = Network(height="100vh")
     net.toggle_physics(True)
 
     # testing adding nodes and edges
@@ -22,16 +15,7 @@ def main():
     net.add_edge(1, 3, weight=20)
     net.add_edge(1, 4, weight=500)
 
-
-    # generates html file of graph visualizer to respective directory
-    net.generate_html('./stonks/templates/mygraph.html')
-    net.write_html('./stonks/templates/mygraph.html')
-
-
-if __name__ == "__main__":
-    main()
-
-
-
-
+    template_path = os.path.abspath('stonks/templates')
+    write_path = os.path.join(template_path, 'mygraph.html')
+    net.generate_html(write_path)
 

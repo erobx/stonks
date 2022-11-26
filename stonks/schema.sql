@@ -1,2 +1,2 @@
 --This is where we will define how our data is stored
-
+--TICKER    P/E     VOLUME      PRICE       MARKET CAP      MORE?
