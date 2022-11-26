@@ -1,0 +1,13 @@
+I think we just call the api once a week and store the data in
+the database then run the algorithim on it to add the edges in the
+network.
+
+When a user searches for a ticker, we just query the database
+and display the graph aka the weights of the different edges but
+idk if each time we have to recalculate the weights.
+
+I think each time a user inputs a ticker we check if the weights
+are calculated => if not we calculate the weight for that ticker and
+store it in the database in a new column and if it does we just
+display it. This improves performance and not taking a ton of time
+to run.
