@@ -1,3 +1,11 @@
+''''
+Run to install on your system
+
+pip install -e .
+
+Used to test on a vm
+'''
+
 from setuptools import find_packages, setup
 
 setup(

@@ -2,3 +2,5 @@
 .env
 venv/
 stonks/__pycache__
+instance/
+__pycache__/
