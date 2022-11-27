@@ -3,7 +3,7 @@ Run to install on your system
 
 pip install -e .
 
-Used to test on a vm
+Used to test on a vm aka venv
 '''
 
 from setuptools import find_packages, setup
@@ -16,5 +16,6 @@ setup(
     install_requires=[
         'flask',
         'pyvis',
+        'yfinance',
     ],
 )

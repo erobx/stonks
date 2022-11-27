@@ -1,6 +1,7 @@
 import sqlite3
 import click
 from flask import current_app, g
+import yfinance as yf
 
 def get_db():
     if 'db' not in g:
@@ -18,6 +19,7 @@ def close_db(e=None):
     if db is not None:
         db.close()
 
+# going to run once a week or however often we want to populate the db
 def init_db():
     db = get_db()
 
