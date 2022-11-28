@@ -17,5 +17,6 @@ setup(
         'flask',
         'pyvis',
         'yfinance',
+        'yahoo_fin',
     ],
 )
