@@ -1,7 +1,6 @@
 import sqlite3
 import click
 from flask import current_app, g
-import yfinance as yf
 
 def get_db():
     if 'db' not in g:
