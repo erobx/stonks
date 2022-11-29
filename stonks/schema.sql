@@ -10,8 +10,3 @@ CREATE TABLE stock (
     price FLOAT NOT NULL,
     p_e FLOAT NOT NULL
 );
-
-CREATE TABLE tickers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ticker TEXT UNIQUE NOT NULL
-);
