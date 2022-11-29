@@ -5,6 +5,7 @@ import pandas as pd
 from yahoo_fin import stock_info as si
 import csv
 import numpy as np
+import yfinance as yf
 
 '''Code from: https://levelup.gitconnected.com/how-to-get-all-stock-symbols-a73925c16a1b'''
 
@@ -35,8 +36,28 @@ for symbol in symbols:
         sav_set.add( symbol )
 
 s = list(sav_set)
+tickers_data = {}
+for i in range (0,2):
+    ticker_object = yf.Ticker(s[i])
+
+    #convert info() output from dictionary to dataframe
+    temp = pd.DataFrame.from_dict(ticker_object.info, orient="index")
+    temp.reset_index(inplace=True)
+    temp.columns = ["Attribute", "Recent"]
+    
+    # add (ticker, dataframe) to main dictionary
+    tickers_data[s[i]] = temp
+
+combined_data = pd.concat(tickers_data)
+combined_data = combined_data.reset_index()
+employees = combined_data[combined_data["Attribute"]=="fullTimeEmployees"].reset_index()
+del employees["level_1"]
+del employees["index"]  # clean up unnecessary column
+employees.columns =("Ticker", "Attribute", "Recent")
+print(employees)    
+
 x = np.reshape(s, (len(s), 1))
-header = ['ticker']
+header = ['Ticker']
 
 with open('tickers.csv', 'w+', newline='') as f:
     writer = csv.writer(f)
