@@ -54,7 +54,7 @@ employees = combined_data[combined_data["Attribute"]=="fullTimeEmployees"].reset
 del employees["level_1"]
 del employees["index"]  # clean up unnecessary column
 employees.columns =("Ticker", "Attribute", "Recent")
-print(employees)    
+print(employees)
 
 x = np.reshape(s, (len(s), 1))
 header = ['Ticker']
