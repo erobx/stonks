@@ -172,3 +172,4 @@ write_csv(20)
 create_connection('stonks.db')
 
 # sqlite3 stonks.db < test.sql
+#
