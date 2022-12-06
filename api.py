@@ -40,6 +40,19 @@ def get_stocks():
     
     return list(sav_set)
 
+def number_format(value):
+    if (type(value) == str):
+        if (value == 'nan'):
+            value = '0'
+        if (value[-1] == 'M'):
+            value = value[:-1]
+            value = float(value) * 10**6
+        elif (value[-1] == 'B'):
+            value = value[:-1]
+            value = float(value) * 10**9
+
+    return(str(value))
+                
 tickers = get_stocks()
 
 def write_csv(n):
@@ -104,7 +117,8 @@ def write_csv(n):
         
         for h in si_quote_headers:
             value = quote_table.get(h)  
-            if value != None:
+            if value != None:    
+                value = number_format(value)     
                 values.append(value)
             else:
                 values.append('0')
@@ -120,6 +134,7 @@ def write_csv(n):
             value = stats[stats['Attribute']==h].reset_index()
             if not value.empty:
                 value = value.iloc[0]['Value']
+                value = number_format(value)   
                 values.append(value)
             else:
                 values.append('0')
