@@ -1,6 +1,8 @@
 '''
 This is to test the yfinance module and see how it structures the data
 '''
+import warnings
+warnings. simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
 from yahoo_fin import stock_info as si
 import csv
@@ -40,7 +42,7 @@ def get_stocks():
 tickers = get_stocks()
 
 # 1
-yf_header = ['logo_url']
+yf_header = ['logo_url', 'ticker']
 # 5
 si_quote_headers = [
             'PE Ratio (TTM)', 'Avg. Volume', 'Previous Close',
@@ -54,23 +56,24 @@ headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 
 rows = []
 for t in tickers[:10]:
+    print(t)
     logo = yf.Ticker(t).info[yf_header[0]]
     quote_table = si.get_quote_table(t)
     info = si.get_company_info(t)
     stats = si.get_stats(t)
 
-    values = [logo]
+    values = [logo, t]
     
     for h in si_quote_headers:
-        value = quote_table[h]
-        if value:
+        value = quote_table.get(h)  
+        if value != None:
             values.append(value)
         else:
             values.append('nan')
 
     for h in si_info_headers:
-        value = info['Value'][h]
-        if value:
+        value = info['Value'].get(h)
+        if value != None:
             values.append(value)
         else:
             values.append('nan')
