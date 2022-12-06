@@ -55,19 +55,27 @@ si_stats_headers = ['Revenue (ttm)', 'Quarterly Revenue Growth', 'Gross Profit (
 headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 
 rows = []
-<<<<<<< HEAD
 for t in tickers[:10]:
     print(t)
-    #
-    logo = yf.Ticker(t).info[yf_header[0]]
-=======
-for t in tickers[:5]:
-    print(t)
     logo = yf.Ticker(t).info.get(yf_header[0])
->>>>>>> 4a2bcf06a68bf220b2978663082a4a57ee75d5b8
-    quote_table = si.get_quote_table(t)
-    info = si.get_company_info(t)
-    stats = si.get_stats(t)
+
+    try:
+        info = si.get_company_info(t)
+    except TypeError:
+        print('Could not get info')
+        continue
+
+    try:
+        quote_table = si.get_quote_table(t)
+    except TypeError:
+        print('Could not get quote table')
+        continue
+
+    try:
+        stats = si.get_stats(t)
+    except TypeError:
+        print('Could not get stats')
+        continue
 
     values = [logo, t]
     
