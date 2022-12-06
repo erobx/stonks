@@ -126,17 +126,31 @@ def write_csv(n):
 
         for h in si_info_headers:
             value = info['Value'].get(h)
-            if value != None:
-                values.append(value)
-            else:
-                values.append('Other')
+            if h == 'employees':
+                if value == 'nan' or value != None:
+                    values.append(generate_emp())
+                else:
+                    values.append(value)
+            elif h == 'sector':
+                if value == 'nan' or value != None:
+                    values.append('Other')
+                else:
+                    values.append(value)
 
         for h in si_stats_headers:
             value = stats[stats['Attribute']==h].reset_index()
             if not value.empty:
                 value = value.iloc[0]['Value']
-                value = number_format(value)   
-                values.append(value)
+                value = number_format(value)
+                if value == 'nan':
+                    if h == 'Revenue (ttm)':
+                        values.append(fabricate())
+                    elif h == 'Quarterly Revenue Growth (yoy)':
+                        values.append(growth())
+                    else:
+                        values.append(fabricate())
+                else:
+                    values.append(value)
             else:
                 values.append(fabricate())
 
@@ -171,11 +185,25 @@ def create_connection(db_file):
 
 def fabricate():
     n = 1_000_000
-    m = 200_000_000
+    m = 50_000_000
     return str(random.randint(n, m))
 
+def generate_pe():
+    n = 1.
+    m = 20.
+    return str(random.uniform(n, m))
 
-write_csv(20)
+def generate_emp():
+    n = 1
+    m = 20000
+    return str(random.randint(n,m))
+
+def growth():
+    n = 1.
+    m = 99.
+    return str(random.uniform(n, m)*100) + '%'
+
+write_csv(5)
 create_connection('stonks.db')
 
 # sqlite3 stonks.db < test.sql
