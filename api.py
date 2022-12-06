@@ -57,6 +57,7 @@ headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 rows = []
 for t in tickers[:10]:
     print(t)
+    #
     logo = yf.Ticker(t).info[yf_header[0]]
     quote_table = si.get_quote_table(t)
     info = si.get_company_info(t)
