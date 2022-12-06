@@ -45,7 +45,10 @@ def number_format(value):
     if (type(value) == str):
         if (value == 'nan'):
             value = '0'
-        if (value[-1] == 'M'):
+        if (value[-1] == 'k'):
+            value = value[:-1]
+            value = float(value) * 10**3
+        elif (value[-1] == 'M'):
             value = value[:-1]
             value = float(value) * 10**6
         elif (value[-1] == 'B'):
@@ -171,11 +174,11 @@ def create_connection(db_file):
 
 def fabricate():
     n = 1_000_000
-    m = 200_000_000
+    m = 50_000_000
     return str(random.randint(n, m))
 
 
-write_csv(20)
+write_csv(10)
 create_connection('stonks.db')
 
 # sqlite3 stonks.db < test.sql
