@@ -8,6 +8,7 @@ from yahoo_fin import stock_info as si
 import csv
 import numpy as np
 import yfinance as yf
+import sqlite3
 
 '''Code from: https://levelup.gitconnected.com/how-to-get-all-stock-symbols-a73925c16a1b'''
 def get_stocks():
@@ -39,91 +40,118 @@ def get_stocks():
     
     return list(sav_set)
 
-#tickers = get_stocks()
+tickers = get_stocks()
 
-# 1
-yf_header = ['logo_url', 'ticker']
-# 5
-si_quote_headers = [
-            'PE Ratio (TTM)', 'Avg. Volume', 'Previous Close',
-            'Market Cap', 'EPS (TTM)']
-# 2
-si_info_headers = ['sector', 'fullTimeEmployees']
-# 3
-si_stats_headers = ['Revenue (ttm)', 'Quarterly Revenue Growth', 'Gross Profit (ttm)']
+def write_csv(n):
+    # 1
+    yf_header = ['logo_url', 'ticker']
+    # 5
+    si_quote_headers = [
+                'PE Ratio (TTM)', 'Avg. Volume', 'Previous Close',
+                'Market Cap', 'EPS (TTM)']
+    # 2
+    si_info_headers = ['sector', 'fullTimeEmployees']
+    # 3
+    si_stats_headers = ['Revenue (ttm)', 'Quarterly Revenue Growth (yoy)', 'Gross Profit (ttm)']
 
-headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
+    headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 
-rows = []
-counter = 0
-tickers = ['RVRB']
-for t in tickers[:50]:
-    counter += 1
-    print(t, ' ', counter)
-    logo = yf.Ticker(t).info.get(yf_header[0])
-    
-    try:
-        info = si.get_company_info(t)
-    except TypeError:
-        print('Could not get info')
-        continue
-    except KeyError:
-        print('KeyError')
-        continue
+    rows = []
+    counter = 0
+    for t in tickers[:n]:
+        if (t.find('$') != -1):
+            continue
+        elif (t.find('.') != -1):
+            continue
+        elif (len(t) > 4):
+            continue
 
-    try:
-        quote_table = si.get_quote_table(t)
-    except TypeError:
-        print('Could not get quote table')
-        continue
-    except KeyError:
-        print('KeyError')
-        continue
+        print(t, ' ', counter)
+        logo = yf.Ticker(t).info.get(yf_header[0])
+        
+        try:
+            info = si.get_company_info(t)
+        except TypeError:
+            print('Could not get info')
+            continue
+        except KeyError:
+            print('KeyError')
+            continue
 
-    try:
-        stats = si.get_stats(t)
-    except TypeError:
-        print('Could not get stats')
-        continue
-    except KeyError:
-        print('KeyError')
-        continue
+        try:
+            quote_table = si.get_quote_table(t)
+        except TypeError:
+            print('Could not get quote table')
+            continue
+        except KeyError:
+            print('KeyError')
+            continue
 
-    if logo == '':
-        values = ['nan', t]
-    else:
-        values = [logo, t]
-    
-    for h in si_quote_headers:
-        value = quote_table.get(h)  
-        if value != None:
-            values.append(value)
+        try:
+            stats = si.get_stats(t)
+        except TypeError:
+            print('Could not get stats')
+            continue
+        except KeyError:
+            print('KeyError')
+            continue
+
+        counter += 1
+        if logo == '':
+            values = ['nan', t]
         else:
-            values.append('nan')
+            values = [logo, t]
+        
+        for h in si_quote_headers:
+            value = quote_table.get(h)  
+            if value != None:
+                values.append(value)
+            else:
+                values.append('0')
 
-    for h in si_info_headers:
-        value = info['Value'].get(h)
-        if value != None:
-            values.append(value)
-        else:
-            values.append('nan')
+        for h in si_info_headers:
+            value = info['Value'].get(h)
+            if value != None:
+                values.append(value)
+            else:
+                values.append('Other')
 
-    for h in si_stats_headers:
-        value = stats[stats['Attribute']==h].reset_index()
-        if not value.empty:
-            value = value.iloc[0]['Value']
-            values.append(value)
-        else:
-            values.append('nan')
+        for h in si_stats_headers:
+            value = stats[stats['Attribute']==h].reset_index()
+            if not value.empty:
+                value = value.iloc[0]['Value']
+                values.append(value)
+            else:
+                values.append('nan')
 
-    rows.append(values)
+        rows.append(values)
 
-rows = np.asarray(rows)
-rows = np.reshape(rows, (len(rows), len(headers)))
+    rows = np.asarray(rows)
+    rows = np.reshape(rows, (len(rows), len(headers)))
 
-with open('tickers.csv', 'w+', newline='') as f:
-    writer = csv.writer(f)
-    writer.writerow(headers)
-    writer.writerows(rows)
+    with open('tickers.csv', 'w+', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+        writer.writerows(rows)
 
-f.close()
+    f.close()
+
+def create_connection(db_file):
+    """ create a database connection to a SQLite database """
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+        cursor = conn.cursor()
+        file = open('tickers.csv')
+        contents = csv.reader(file)
+        insert_records = "INSERT INTO stock (logo, ticker, pe, volume, price, market_cap, eps, sector, employees, revenue, growth, profit) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        cursor.executemany(insert_records, contents)
+        conn.commit()
+    finally:
+        if conn:
+            conn.close()
+
+write_csv(3)
+create_connection('stonks.db')
+
+# sqlite3 stonks.db < test.sql

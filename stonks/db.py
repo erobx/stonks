@@ -1,5 +1,6 @@
 import sqlite3
 import click
+import csv
 from flask import current_app, g
 
 def get_db():
@@ -23,7 +24,16 @@ def init_db():
     db = get_db()
 
     with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+        print('Loading db')
+        file = open('../test.csv')
+        contents = csv.reader(file)
+        insert_records = "INSERT INTO stock (logo, ticker, pe, volume, price, market_cap, eps, sector, employees, revenue, growth, profit) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        db.executemany(insert_records, contents)
+        select_all = "SELECT ticker, price, sector FROM stock"
+        rows = db.execute(select_all).fetchall()
+        for r in rows:
+            print(r)
+        db.commit()
 
 @click.command('init-db')
 def init_db_command():

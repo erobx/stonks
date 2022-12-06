@@ -12,3 +12,11 @@ are calculated => if not we calculate the weight for that ticker and
 store it in the database in a new column and if it does we just
 display it. This improves performance and not taking a ton of time
 to run.
+
+
+
+TO DO:
+Find a way to drop table.
+Create HTML function for queries.
+Display graph.
+Create BFS and DFS.

@@ -1,5 +1,6 @@
 from pyvis.network import Network
 import os.path
+import sqlite3
 
 def init_network():
     net = Network(height="100vh")
