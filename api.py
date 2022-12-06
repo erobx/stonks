@@ -39,7 +39,7 @@ def get_stocks():
     
     return list(sav_set)
 
-tickers = get_stocks()
+#tickers = get_stocks()
 
 # 1
 yf_header = ['logo_url', 'ticker']
@@ -55,7 +55,8 @@ si_stats_headers = ['Revenue (ttm)', 'Quarterly Revenue Growth', 'Gross Profit (
 headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 
 rows = []
-for t in tickers[:10]:
+tickers = ['MHLA', 'MSFT', 'FTNT']
+for t in tickers[:5]:
     print(t)
     logo = yf.Ticker(t).info.get(yf_header[0])
 
@@ -63,6 +64,8 @@ for t in tickers[:10]:
         info = si.get_company_info(t)
     except TypeError:
         print('Could not get info')
+    except KeyError:
+        print('KeyError')
         continue
 
     try:
