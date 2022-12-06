@@ -1,5 +1,5 @@
 --This is where we will define how our data is stored
---TICKER, P/E, VOLUME, PRICE, MARKET CAP, EPS, SECTOR, EMPLOYEES, LOGO, grossProfits, dividends, earningsGrowth
+--TICKER, trailingPE, averageVolume, regularMarketPrice, marketCap, forwardPE, sector, fullTimeEmployees, logo_url, grossProfits, dividends, earningsGrowth
 
 DROP TABLE IF EXISTS stock;
 
