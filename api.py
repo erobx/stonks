@@ -57,7 +57,7 @@ def write_csv(n):
     headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 
     rows = []
-    counter = 0
+    counter = 1
     for t in tickers[:n]:
         if (t.find('$') != -1):
             continue
@@ -98,7 +98,7 @@ def write_csv(n):
 
         counter += 1
         if logo == '':
-            values = ['nan', t]
+            values = ['none', t]
         else:
             values = [logo, t]
         
@@ -122,7 +122,7 @@ def write_csv(n):
                 value = value.iloc[0]['Value']
                 values.append(value)
             else:
-                values.append('nan')
+                values.append('0')
 
         rows.append(values)
 
@@ -131,7 +131,7 @@ def write_csv(n):
 
     with open('tickers.csv', 'w+', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(headers)
+        # writer.writerow(headers) # not necessary
         writer.writerows(rows)
 
     f.close()
@@ -142,6 +142,8 @@ def create_connection(db_file):
     try:
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
+        cursor.execute('DELETE FROM stock;')
+        print('We have deleted', cursor.rowcount, 'records from the table.')
         file = open('tickers.csv')
         contents = csv.reader(file)
         insert_records = "INSERT INTO stock (logo, ticker, pe, volume, price, market_cap, eps, sector, employees, revenue, growth, profit) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -151,7 +153,7 @@ def create_connection(db_file):
         if conn:
             conn.close()
 
-write_csv(3)
+write_csv(20)
 create_connection('stonks.db')
 
 # sqlite3 stonks.db < test.sql
