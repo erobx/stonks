@@ -1,6 +1,8 @@
 '''
 This is to test the yfinance module and see how it structures the data
 '''
+import warnings
+warnings. simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
 from yahoo_fin import stock_info as si
 import csv
@@ -53,8 +55,9 @@ si_stats_headers = ['Revenue (ttm)', 'Quarterly Revenue Growth', 'Gross Profit (
 headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 
 rows = []
-for t in tickers[:10]:
-    logo = yf.Ticker(t).info[yf_header[0]]
+for t in tickers[:5]:
+    print(t)
+    logo = yf.Ticker(t).info.get(yf_header[0])
     quote_table = si.get_quote_table(t)
     info = si.get_company_info(t)
     stats = si.get_stats(t)
