@@ -51,13 +51,16 @@ def number_format(value):
         elif (value[-1] == 'B'):
             value = value[:-1]
             value = float(value) * 10**9
+        elif (value[-1] == 'K'):
+            value = value[:-1]
+            value = float(value) * 10**3
 
     return(str(value))
                 
 tickers = get_stocks()
 
 def write_csv(n):
-    # 1
+    # 2
     yf_header = ['logo_url', 'ticker']
     # 5
     si_quote_headers = [
@@ -72,7 +75,6 @@ def write_csv(n):
 
     rows = []
     counter = 1
-    tickers = ['SVFB', 'CLFD', 'TRIP', 'NPK', 'NABL']
     for t in tickers[:n]:
         if (t.find('$') != -1):
             continue
@@ -118,22 +120,40 @@ def write_csv(n):
             values = [logo, t]
         
         for h in si_quote_headers:
-            value = quote_table.get(h)  
-            if value != None:    
-                value = number_format(value)     
-                values.append(value)
+            value = quote_table.get(h)
+            if h == 'PE Ratio (TTM)':
+                if str(value) == 'nan':
+                    values.append(generate_pe())
+                else:
+                    value = number_format(value)
+                    values.append(value)
+            elif h == 'Market Cap':
+                if str(value) == 'nan' or value == None:
+                    values.append(fabricate())
+                else:
+                    value = number_format(value)
+                    values.append(value)
+            elif h == 'EPS (TTM)':
+                if str(value) == 'nan' or value == None:
+                    values.append(generate_eps())
+                else:
+                    values.append(value)
             else:
-                values.append(fabricate())
+                if value != None:
+                    value = number_format(value)
+                    values.append(value)
+
+
 
         for h in si_info_headers:
             value = info['Value'].get(h)
-            if h == 'employees':
-                if value == 'nan' or value != None:
+            if h == 'fullTimeEmployees':
+                if value == 'nan' or value == None:
                     values.append(generate_emp())
                 else:
                     values.append(value)
             elif h == 'sector':
-                if value == 'nan' or value != None:
+                if value == 'nan' or value == None:
                     values.append('Other')
                 else:
                     values.append(value)
@@ -154,7 +174,7 @@ def write_csv(n):
                     values.append(value)
             else:
                 values.append(fabricate())
-        print(values)
+            
         rows.append(values)
 
     rows = np.asarray(rows)
@@ -187,24 +207,25 @@ def create_connection(db_file):
 def fabricate():
     n = 1_000_000
     m = 50_000_000
-    return str(random.randint(n, m))
+    return str(round(random.randint(n, m)))
 
 def generate_pe():
     n = 1.
     m = 20.
-    return str(random.uniform(n, m))
+    return str(round(random.uniform(n, m)))
 
 def generate_emp():
     n = 1
     m = 20000
-    return str(random.randint(n,m))
+    return str(round(random.randint(n,m)))
 
 def growth():
-    n = 1.
-    m = 99.
-    return str(round(random.uniform(n, m)*100)) + '%'
+    return str(round(random.random())*100) + '%'
 
-write_csv(5)
+def generate_eps():
+    return str(round(random.uniform(0, 10)))
+
+write_csv(10)
 create_connection('stonks.db')
 
 # sqlite3 stonks.db < test.sql
