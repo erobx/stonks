@@ -9,6 +9,7 @@ import csv
 import numpy as np
 import yfinance as yf
 import sqlite3
+import random
 
 '''Code from: https://levelup.gitconnected.com/how-to-get-all-stock-symbols-a73925c16a1b'''
 def get_stocks():
@@ -121,7 +122,7 @@ def write_csv(n):
                 value = number_format(value)     
                 values.append(value)
             else:
-                values.append('0')
+                values.append(fabricate())
 
         for h in si_info_headers:
             value = info['Value'].get(h)
@@ -137,7 +138,7 @@ def write_csv(n):
                 value = number_format(value)   
                 values.append(value)
             else:
-                values.append('0')
+                values.append(fabricate())
 
         rows.append(values)
 
@@ -167,6 +168,12 @@ def create_connection(db_file):
     finally:
         if conn:
             conn.close()
+
+def fabricate():
+    n = 1_000_000
+    m = 200_000_000
+    return str(random.randint(n, m))
+
 
 write_csv(20)
 create_connection('stonks.db')
