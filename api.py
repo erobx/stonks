@@ -60,19 +60,23 @@ for t in tickers[:10]:
     stats = si.get_stats(t)
 
     values = [logo]
-    quotes = [quote_table[h] for h in si_quote_headers]
-    for i in quotes:
-        values.append(i)
+    
+    for h in si_quote_headers:
+        value = quote_table[h]
+        if value:
+            values.append(value)
+        else:
+            values.append('nan')
 
     for h in si_info_headers:
         value = info['Value'][h]
-        if value != '':
+        if value:
             values.append(value)
         else:
             values.append('nan')
 
     for h in si_stats_headers:
-        value = stats[stats['Attribute']==h]
+        value = stats[stats['Attribute']==h].reset_index()
         if not value.empty:
             value = value.iloc[0]['Value']
             values.append(value)

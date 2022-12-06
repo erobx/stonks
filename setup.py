@@ -18,5 +18,6 @@ setup(
         'pyvis',
         'yfinance',
         'yahoo_fin',
+        'html5lib',
     ],
 )
