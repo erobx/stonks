@@ -58,5 +58,7 @@ with open('test.csv', 'w+', newline='') as f:
     writer.writerow(headers)
     writer.writerows(rows)
 
+f.close()
+
 #conn = sqlite3.connect('instance/stonks.sqlite')
 #pd.DataFrame.to_sql('test.sql', conn, msft)

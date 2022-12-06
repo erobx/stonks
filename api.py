@@ -39,41 +39,54 @@ def get_stocks():
 
 tickers = get_stocks()
 
-headers = ['ticker', 'trailingPE', 'averageVolume', 'regularMarketPrice', 
-            'marketCap', 'forwardPE', 'sector', 'fullTimeEmployees', 
-            'logo_url', 'grossProfits', 'dividendRate', 'earningsGrowth']
+# 1
+yf_header = ['logo_url']
+# 5
+si_quote_headers = [
+            'PE Ratio (TTM)', 'Avg. Volume', 'Previous Close',
+            'Market Cap', 'EPS (TTM)']
+# 2
+si_info_headers = ['sector', 'fullTimeEmployees']
+# 3
+si_stats_headers = ['Revenue (ttm)', 'Quarterly Revenue Growth', 'Gross Profit (ttm)']
 
-# rows = np.asarray([])
-# for ticker in tickers:
-#     t = yf.Ticker(ticker).info
-#     info = np.asarray([t[i] for i in headers[1:] if t[i] in t])
-#     rows = np.append(rows, info)
+headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 
-# tickers_data = {}
-# for i in tickers[:5]:
-#     ticker_object = yf.Ticker(i)
+rows = []
+for t in tickers[:10]:
+    logo = yf.Ticker(t).info[yf_header[0]]
+    quote_table = si.get_quote_table(t)
+    info = si.get_company_info(t)
+    stats = si.get_stats(t)
 
-#     #convert info() output from dictionary to dataframe
-#     temp = pd.DataFrame.from_dict(ticker_object.info, orient="index")
-#     temp.reset_index(inplace=True)
-#     temp.columns = ["Attribute", "Recent"]
-    
-#     # add (ticker, dataframe) to main dictionary
-#     tickers_data[i] = temp
+    values = [logo]
+    quotes = [quote_table[h] for h in si_quote_headers]
+    for i in quotes:
+        values.append(i)
 
-# combined_data = pd.concat(tickers_data)
-# combined_data = combined_data.reset_index()
-# employees = combined_data[combined_data["Attribute"]=="trailingPE"].reset_index()
-# del employees["level_1"]
-# del employees["index"]  # clean up unnecessary column
-# employees.columns =("Ticker", "Attribute", "Recent")
-# print(employees)
+    for h in si_info_headers:
+        value = info['Value'][h]
+        if value != '':
+            values.append(value)
+        else:
+            values.append('nan')
 
-#rows = np.reshape(rows, (len(rows), len(headers)))
+    for h in si_stats_headers:
+        value = stats[stats['Attribute']==h]
+        if not value.empty:
+            value = value.iloc[0]['Value']
+            values.append(value)
+        else:
+            values.append('nan')
 
-# with open('tickers.csv', 'w+', newline='') as f:
-#     writer = csv.writer(f)
-#     writer.writerow(headers)
-#     writer.writerows(rows)
+    rows.append(values)
 
-# f.close()
+rows = np.asarray(rows)
+rows = np.reshape(rows, (len(rows), len(headers)))
+
+with open('tickers.csv', 'w+', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(headers)
+    writer.writerows(rows)
+
+f.close()
