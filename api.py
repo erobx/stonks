@@ -54,13 +54,16 @@ def number_format(value):
         elif (value[-1] == 'B'):
             value = value[:-1]
             value = float(value) * 10**9
+        elif (value[-1] == 'K'):
+            value = value[:-1]
+            value = float(value) * 10**3
 
     return(str(value))
                 
 tickers = get_stocks()
 
 def write_csv(n):
-    # 1
+    # 2
     yf_header = ['logo_url', 'ticker']
     # 5
     si_quote_headers = [
@@ -120,29 +123,61 @@ def write_csv(n):
             values = [logo, t]
         
         for h in si_quote_headers:
-            value = quote_table.get(h)  
-            if value != None:    
-                value = number_format(value)     
-                values.append(value)
+            value = quote_table.get(h)
+            if h == 'PE Ratio (TTM)':
+                if str(value) == 'nan':
+                    values.append(generate_pe())
+                else:
+                    value = number_format(value)
+                    values.append(value)
+            elif h == 'Market Cap':
+                if str(value) == 'nan' or value == None:
+                    values.append(fabricate())
+                else:
+                    value = number_format(value)
+                    values.append(value)
+            elif h == 'EPS (TTM)':
+                if str(value) == 'nan' or value == None:
+                    values.append(generate_eps())
+                else:
+                    values.append(value)
             else:
-                values.append(fabricate())
+                if value != None:
+                    value = number_format(value)
+                    values.append(value)
+
+
 
         for h in si_info_headers:
             value = info['Value'].get(h)
-            if value != None:
-                values.append(value)
-            else:
-                values.append('Other')
+            if h == 'fullTimeEmployees':
+                if value == 'nan' or value == None:
+                    values.append(generate_emp())
+                else:
+                    values.append(value)
+            elif h == 'sector':
+                if value == 'nan' or value == None:
+                    values.append('Other')
+                else:
+                    values.append(value)
 
         for h in si_stats_headers:
             value = stats[stats['Attribute']==h].reset_index()
             if not value.empty:
                 value = value.iloc[0]['Value']
-                value = number_format(value)   
-                values.append(value)
+                value = number_format(value)
+                if value == 'nan':
+                    if h == 'Revenue (ttm)':
+                        values.append(fabricate())
+                    elif h == 'Quarterly Revenue Growth (yoy)':
+                        values.append(growth())
+                    elif h == 'Gross Profit (ttm)':
+                        values.append(fabricate())
+                else:
+                    values.append(value)
             else:
                 values.append(fabricate())
-
+            
         rows.append(values)
 
     rows = np.asarray(rows)
@@ -175,9 +210,31 @@ def create_connection(db_file):
 def fabricate():
     n = 1_000_000
     m = 50_000_000
+<<<<<<< HEAD
     return str(random.randint(n, m))
+=======
+    return str(round(random.randint(n, m)))
+>>>>>>> 35c598f872c7f3610a72740e8f4a70cd341da369
 
+def generate_pe():
+    n = 1.
+    m = 20.
+    return str(round(random.uniform(n, m)))
 
+<<<<<<< HEAD
+=======
+def generate_emp():
+    n = 1
+    m = 20000
+    return str(round(random.randint(n,m)))
+
+def growth():
+    return str(round(random.random())*100) + '%'
+
+def generate_eps():
+    return str(round(random.uniform(0, 10)))
+
+>>>>>>> 35c598f872c7f3610a72740e8f4a70cd341da369
 write_csv(10)
 create_connection('stonks.db')
 
