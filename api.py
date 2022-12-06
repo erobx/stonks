@@ -72,6 +72,7 @@ def write_csv(n):
 
     rows = []
     counter = 1
+    tickers = ['SVFB', 'CLFD', 'TRIP', 'NPK', 'NABL']
     for t in tickers[:n]:
         if (t.find('$') != -1):
             continue
@@ -147,13 +148,13 @@ def write_csv(n):
                         values.append(fabricate())
                     elif h == 'Quarterly Revenue Growth (yoy)':
                         values.append(growth())
-                    else:
+                    elif h == 'Gross Profit (ttm)':
                         values.append(fabricate())
                 else:
                     values.append(value)
             else:
                 values.append(fabricate())
-
+        print(values)
         rows.append(values)
 
     rows = np.asarray(rows)
@@ -201,7 +202,7 @@ def generate_emp():
 def growth():
     n = 1.
     m = 99.
-    return str(random.uniform(n, m)*100) + '%'
+    return str(round(random.uniform(n, m)*100)) + '%'
 
 write_csv(5)
 create_connection('stonks.db')
