@@ -1,4 +1,6 @@
 import yahoo_fin.stock_info as si
+import warnings
+warnings. simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
 import sqlite3
 import yfinance as yf
@@ -18,47 +20,50 @@ si_stats_headers = ['Revenue (ttm)', 'Quarterly Revenue Growth', 'Gross Profit (
 
 headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
 
-tickers = ['MSFT', 'TSLA', 'FTNT', 'ATCX']
+tickers = ['SPB', 'TSLA', 'FTNT', 'ATCX']
 
 rows = []
 
-for t in tickers:
-    logo = yf.Ticker(t).info[yf_header[0]]
-    quote_table = si.get_quote_table(t)
-    info = si.get_company_info(t)
-    stats = si.get_stats(t)
+info = si.get_company_info('SPB')
+print(info)
 
-    values = [logo]
-    quotes = [quote_table[h] for h in si_quote_headers]
-    for i in quotes:
-        values.append(i)
+# for t in tickers:
+#     logo = yf.Ticker(t).info[yf_header[0]]
+#     quote_table = si.get_quote_table(t)
+#     info = si.get_company_info(t)
+#     stats = si.get_stats(t)
 
-    for h in si_info_headers:
-        value = info['Value'][h]
-        if value != '':
-            values.append(value)
-        else:
-            values.append('nan')
+#     values = [logo]
+#     quotes = [quote_table[h] for h in si_quote_headers]
+#     for i in quotes:
+#         values.append(i)
 
-    for h in si_stats_headers:
-        value = stats[stats['Attribute']==h]
-        if not value.empty:
-            value = value.iloc[0]['Value']
-            values.append(value)
-        else:
-            values.append('nan')
+#     for h in si_info_headers:
+#         value = info['Value'][h]
+#         if value != '':
+#             values.append(value)
+#         else:
+#             values.append('nan')
 
-    rows.append(values)
+#     for h in si_stats_headers:
+#         value = stats[stats['Attribute']==h]
+#         if not value.empty:
+#             value = value.iloc[0]['Value']
+#             values.append(value)
+#         else:
+#             values.append('nan')
 
-rows = np.asarray(rows)
-rows = np.reshape(rows, (len(rows), len(headers)))
+#     rows.append(values)
 
-with open('test.csv', 'w+', newline='') as f:
-    writer = csv.writer(f)
-    writer.writerow(headers)
-    writer.writerows(rows)
+# rows = np.asarray(rows)
+# rows = np.reshape(rows, (len(rows), len(headers)))
 
-f.close()
+# with open('test.csv', 'w+', newline='') as f:
+#     writer = csv.writer(f)
+#     writer.writerow(headers)
+#     writer.writerows(rows)
+
+# f.close()
 
 #conn = sqlite3.connect('instance/stonks.sqlite')
 #pd.DataFrame.to_sql('test.sql', conn, msft)
