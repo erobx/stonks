@@ -38,7 +38,7 @@ def get_node_data(db_file, id, sort):
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
         get_data = "SELECT * FROM stock ORDER BY "
-        get_data = get_data + sort
+        get_data = get_data + sort + " DESC"
         cursor.execute(get_data)
         data = cursor.fetchall()
 
