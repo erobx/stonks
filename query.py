@@ -1,8 +1,10 @@
 import sqlite3
 
-# logo, ticker, pe, volume, price, market_cap, eps, sector, employees, revenue, growth, profit
+headers = ["logo", "ticker", "pe", "volume", "price", "market_cap", "eps", "sector", "employees", "revenue", "growth", "profit"]
 
 def find_above_size(data, index):
+    if (index == 0):
+        return 0
     for i in range(1,6):
          if (index - i <= 0): 
             return i
@@ -12,6 +14,8 @@ def find_above_size(data, index):
     # i want [12,13,14,15,16,17,18,19]
 
 def find_below_size(data, index):
+    if (index == len(data) - 1):
+        return (0)
     for i in range(1,6):
          if (index + i >= len(data) - 1):
             return i
@@ -34,29 +38,30 @@ def find_above_neighbors(data, index, size):
     return above_neighbors
         
             
-def get_node_data(db_file, id):
+def get_node_data(db_file, id, sort):
     conn = None
     try:
+        sortIndex = headers.index(sort)
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
-        find_ticker = "SELECT rowid, ticker, volume FROM stock ORDER BY volume DESC"
-        cursor.execute(find_ticker)  
+        get_data = "SELECT * FROM stock ORDER BY "
+        get_data = get_data + sort
+        cursor.execute(get_data)
         data = cursor.fetchall()
 
         index = None
         for i,row in enumerate(data):
             if (data[i][1] == id):
                 index = i
-            #print(i,": ",row, sep="")
+            #print(i,": ",row[sortIndex], sep="")
 
         print(id, "at index:", index)
         print("len of data:", len(data))
 
-        
         above_size = find_above_size(data, index)
         below_size = find_below_size(data, index)
-        print("above size:", above_size)
-        print("below size:", below_size)
+        # print("above size:", above_size)
+        # print("below size:", below_size)
 
         if (above_size < 5):
             above = find_above_neighbors(data, index, above_size)
@@ -71,14 +76,21 @@ def get_node_data(db_file, id):
             above = find_above_neighbors(data, index, above_size)
 
         
-        # print("above:", len(above))
-        # print(above)
-        # print("below:", len(below))
-        # print(below)  
+        print("above:", len(above))
+        for i,a in enumerate(above):
+            print(above[len(above)- i - 1][sortIndex])
+
+        print("SOURCE:",data[index][sortIndex])
+
+        print("below:", len(below))
+        for i,a in enumerate(below):
+            print(below[i][sortIndex])
+
+        
 
     finally:
         if conn:
             conn.close()
 
-get_node_data('stonks.db', 'TSM')
+    return data[index], above, below
 

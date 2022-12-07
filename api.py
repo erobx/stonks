@@ -94,7 +94,7 @@ def write_csv(n):
         
         try:
             info = si.get_company_info(t)
-        except TypeError:
+        except (TypeError, ValueError):
             print('Could not get info')
             continue
         except KeyError:
@@ -103,7 +103,7 @@ def write_csv(n):
 
         try:
             quote_table = si.get_quote_table(t)
-        except TypeError:
+        except (TypeError, ValueError):
             print('Could not get quote table')
             continue
         except KeyError:
@@ -112,7 +112,7 @@ def write_csv(n):
 
         try:
             stats = si.get_stats(t)
-        except TypeError:
+        except (TypeError, ValueError):
             print('Could not get stats')
             continue
         except KeyError:
@@ -230,7 +230,7 @@ def growth():
 def generate_eps():
     return str(round(random.uniform(0, 10)))
 
-write_csv(30)
+write_csv(100)
 create_connection('stonks.db')
 
 # sqlite3 stonks.db < test.sql
