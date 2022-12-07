@@ -80,10 +80,13 @@ def write_csv(n):
     counter = 1
     for t in tickers[:n]:
         if (t.find('$') != -1):
+            print("INVALID TICKER")
             continue
         elif (t.find('.') != -1):
+            print("INVALID TICKER")
             continue
         elif (len(t) > 4):
+            print("INVALID TICKER")
             continue
 
         print(t, ' ', counter)
@@ -145,7 +148,6 @@ def write_csv(n):
                 if value != None:
                     value = number_format(value)
                     values.append(value)
-
 
 
         for h in si_info_headers:
@@ -210,19 +212,13 @@ def create_connection(db_file):
 def fabricate():
     n = 1_000_000
     m = 50_000_000
-<<<<<<< HEAD
-    return str(random.randint(n, m))
-=======
     return str(round(random.randint(n, m)))
->>>>>>> 35c598f872c7f3610a72740e8f4a70cd341da369
 
 def generate_pe():
     n = 1.
     m = 20.
     return str(round(random.uniform(n, m)))
 
-<<<<<<< HEAD
-=======
 def generate_emp():
     n = 1
     m = 20000
@@ -234,9 +230,7 @@ def growth():
 def generate_eps():
     return str(round(random.uniform(0, 10)))
 
->>>>>>> 35c598f872c7f3610a72740e8f4a70cd341da369
-write_csv(10)
+write_csv(30)
 create_connection('stonks.db')
 
 # sqlite3 stonks.db < test.sql
-#
