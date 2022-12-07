@@ -10,9 +10,6 @@ def find_above_size(data, index):
             return i
     return 5
 
-    # index = 20
-    # i want [12,13,14,15,16,17,18,19]
-
 def find_below_size(data, index):
     if (index == len(data) - 1):
         return (0)
@@ -20,10 +17,6 @@ def find_below_size(data, index):
          if (index + i >= len(data) - 1):
             return i
     return 5
-    # return 2
-
-    #index = 20
-    # i want = [21,22]
 
 def find_below_neighbors(data, index, size):
     below_neighbors = []
@@ -55,9 +48,6 @@ def get_node_data(db_file, id, sort):
                 index = i
             #print(i,": ",row[sortIndex], sep="")
 
-        print(id, "at index:", index)
-        print("len of data:", len(data))
-
         above_size = find_above_size(data, index)
         below_size = find_below_size(data, index)
         # print("above size:", above_size)
@@ -76,18 +66,6 @@ def get_node_data(db_file, id, sort):
             above = find_above_neighbors(data, index, above_size)
 
         
-        print("above:", len(above))
-        for i,a in enumerate(above):
-            print(above[len(above)- i - 1][sortIndex])
-
-        print("SOURCE:",data[index][sortIndex])
-
-        print("below:", len(below))
-        for i,a in enumerate(below):
-            print(below[i][sortIndex])
-
-        
-
     finally:
         if conn:
             conn.close()
