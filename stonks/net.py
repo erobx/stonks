@@ -3,19 +3,27 @@ import sys
 sys.path.append('../p3')
 import os.path
 import query
+import urllib3
+import http
 
 # 1. logo, 2. ticker, 3. pe, 4. volume, 5. price, 6. market_cap, 7. eps, 8. sector, 9. employees, 10. revenue, 11. growth, 12. profit
 
-srcData, above, below = query.get_node_data('stonks.db', 'GNE', 'volume')
-for i,a in enumerate(above):
-    print(above[len(above)- i - 1])
+# for i,a in enumerate(above):
+#     print(above[len(above)- i - 1])
+
 
 class Node():
     def __init__(self, info):
         if (info[0] == 'none'):
             self.logo = 'static/images/stonks.jpeg'
         else:
-            self.logo = info[0]
+            http = urllib3.PoolManager()
+            error = http.request('GET', info[0])
+            print(error.status)
+            if (error.status == 404):
+                self.logo = 'static/images/stonks.jpeg'
+            else:
+                self.logo = info[0]
         self.ticker = info[1]
         self.pe = info[2]
         self.volume = info[3]
@@ -28,7 +36,11 @@ class Node():
         self.growth = info[10]
         self.profit = info[11]
 
+template_path = os.path.abspath('stonks/templates')
+write_path = os.path.join(template_path, 'mygraph.html')
+
 def init_network():
+    srcData, above, below = query.get_node_data('stonks.db', 'SMP', 'volume')
     aboveNodeList = []
     belowNodeList = []
     net = Network(height="100vh")
@@ -58,10 +70,13 @@ def init_network():
     #     print("ADDED EDGE FROM", aboveNodeList[i], "--->", aboveNodeList[i+1])
 
 
-    template_path = os.path.abspath('stonks/templates')
+    #net.generate_html(write_path)
+    try:
+        net.write_html(write_path)
+    except (OSError, FileNotFoundError):
+        print('')
+    #net.set_template_dir(template_path, 'mygraph.html')
 
-    net.set_template_dir(template_path, 'mygraph.html')
-    net.generate_html()
 
-init_network()
+#init_network()
 
