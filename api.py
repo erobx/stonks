@@ -220,7 +220,7 @@ def generate_pe():
     return str(round(random.uniform(n, m)))
 
 def generate_emp():
-    n = 1
+    n = 1000
     m = 20000
     return str(round(random.randint(n,m)))
 
