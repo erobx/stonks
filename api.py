@@ -78,8 +78,7 @@ def write_csv(n):
 
     rows = []
     counter = 1
-    tickers = ['VECT']
-    for t in tickers[:n]:
+    for t in tickers[:5]:
         if (t.find('$') != -1):
             print("INVALID TICKER")
             continue
@@ -234,4 +233,5 @@ def generate_eps():
 write_csv(20)
 create_connection('stonks.db')
 
-# sqlite3 stonks.db < test.sql
+# sqlite3 stonks.db < test.sql // OSX and Linux
+# sqlite3 -init test.sql stonks.db // Powershell
