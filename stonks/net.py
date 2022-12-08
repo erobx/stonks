@@ -2,13 +2,12 @@ from pyvis.network import Network
 import sys
 sys.path.append('../p3')
 import os.path
-import query
+import sqlite3
 import urllib3
+from scipy import spatial
+import numpy as np
 
 # 1. logo, 2. ticker, 3. pe, 4. volume, 5. price, 6. market_cap, 7. eps, 8. sector, 9. employees, 10. revenue, 11. growth, 12. profit
-
-# for i,a in enumerate(above):
-#     print(above[len(above)- i - 1])
 
 
 class Node():
@@ -34,45 +33,69 @@ class Node():
         self.growth = info[10]
         self.profit = info[11]
 
-template_path = os.path.abspath('stonks/templates')
-write_path = os.path.join(template_path, 'mygraph.html')
 
-def init_network():
-    srcData, above, below = query.get_node_data('stonks.db', 'GGAL', 'volume')
-    aboveNodeList = []
-    belowNodeList = []
+def init_network(db_file, id, sort):
+    template_path = os.path.abspath('stonks/templates')
+    write_path = os.path.join(template_path, 'mygraph.html')
+    print(write_path)
     net = Network(height="100vh")
     net.toggle_physics(True)
 
-    #source node
-    src = Node(srcData)
-    print("SRC:", src.ticker)
-    n = net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo)
-    aboveNodeList.append(src.ticker)
-    belowNodeList.append(src.ticker)
-
-    for i in range(len(above)):
-        newNode = Node(above[i])
-        aboveNodeList.append(newNode.ticker)
-        net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
-        net.add_edge(aboveNodeList[i], aboveNodeList[i+1])
-        print("ADDED EDGE FROM", aboveNodeList[i], "--->", aboveNodeList[i+1])
-
-
-    ####### TO FIX ##############
-    for i in range(len(below)):
-        newNode = Node(below[i])
-        belowNodeList.append(newNode.ticker)
-        net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
-        net.add_edge(belowNodeList[i], belowNodeList[i+1])
-        print("ADDED EDGE FROM", belowNodeList[i], "--->", belowNodeList[i+1])
-
-
+    conn = None
     try:
-        net.write_html(write_path)
-    except (OSError, FileNotFoundError):
-        print('')
+        conn = sqlite3.connect(db_file)
+        cursor = conn.cursor()
+
+        #source node
+        query = "SELECT * FROM stock WHERE ticker = '" + id + "'"
+        cursor.execute(query)
+        data = cursor.fetchall()[0]
+        src = Node(data)
+        #print("SRC:", src.ticker)
+        net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo)
+
+        inds = get_inds(db_file, id, sort)
+
+        for i in inds:
+            if i == 0:
+                continue
+            query = "SELECT * FROM stock WHERE rowid = " + str(i)
+            cursor.execute(query)
+            data = [j for j in cursor.fetchall()[0]]
+            newNode = Node(data)
+            net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
+            net.add_edge(src.ticker, newNode.ticker)
+
+    finally:
+        try:
+            net.write_html(write_path)
+            if conn:
+                conn.close()
+        except (OSError, FileNotFoundError):
+            print('Error')
+        
+
+def get_inds(db_file, id, sort):
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+        cursor = conn.cursor()
+        get_data = "SELECT volume FROM stock "
+        get_data = get_data + sort
+        cursor.execute(get_data)
+        data = np.asarray(cursor.fetchall())
+        
+        query = "SELECT + " + sort + " FROM stock WHERE ticker = '" + id + "'"
+        cursor.execute(query)
+        id_v = np.asarray(cursor.fetchall())
+        tree = spatial.KDTree(data)
+        k = 6
+        _, inds = tree.query(id_v, k)
+        return inds.reshape(-1)[1:]
+    finally:
+        if conn:
+            conn.close()
 
 
-init_network()
-
+# db_path = os.path.abspath('stonks/stonks.db')
+# init_network(db_path, 'DTF', 'volume')
