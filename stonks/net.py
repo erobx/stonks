@@ -74,5 +74,5 @@ def init_network():
         print('')
 
 
-#init_network()
+init_network()
 

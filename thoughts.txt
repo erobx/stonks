@@ -16,7 +16,5 @@ to run.
 
 
 TO DO:
-Find a way to drop table.
 Create HTML function for queries.
-Display graph.
 Create BFS and DFS.

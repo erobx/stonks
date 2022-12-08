@@ -1,4 +1,6 @@
 import sqlite3
+import numpy as np
+from scipy import spatial
 
 headers = ["logo", "ticker", "pe", "volume", "price", "market_cap", "eps", "sector", "employees", "revenue", "growth", "profit"]
 
@@ -37,38 +39,46 @@ def get_node_data(db_file, id, sort):
         sortIndex = headers.index(sort)
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
-        get_data = "SELECT * FROM stock ORDER BY "
-        get_data = get_data + sort + " DESC"
+        get_data = "SELECT volume FROM stock "
+        get_data = get_data + sort
         cursor.execute(get_data)
-        data = cursor.fetchall()
+        data = np.asarray(cursor.fetchall())
+        
+        query = "SELECT + " + sort + " FROM stock WHERE ticker = '" + id + "'"
+        cursor.execute(query)
+        id_v = np.asarray(cursor.fetchall())
+        tree = spatial.KDTree(data)
+        k = 15
+        _, inds = tree.query(id_v, k)
+        print(inds)
 
-        index = None
-        for i,row in enumerate(data):
-            if (data[i][1] == id):
-                index = i
+        # index = None
+        # for i,row in enumerate(data):
+        #     if (data[i][1] == id):
+        #         index = i
             #print(i,": ",row[sortIndex], sep="")
 
-        above_size = find_above_size(data, index)
-        below_size = find_below_size(data, index)
-        # print("above size:", above_size)
-        # print("below size:", below_size)
+    #     above_size = find_above_size(data, index)
+    #     below_size = find_below_size(data, index)
+    #     # print("above size:", above_size)
+    #     # print("below size:", below_size)
 
-        if (above_size < 5):
-            above = find_above_neighbors(data, index, above_size)
-            below_size = 10 - above_size
-            below = find_below_neighbors(data, index, below_size)
-        elif (below_size < 5):
-            below = find_below_neighbors(data, index, below_size)
-            above_size = 10 - below_size
-            above = find_above_neighbors(data, index, above_size)
-        else:
-            below = find_below_neighbors(data, index, below_size)
-            above = find_above_neighbors(data, index, above_size)
+    #     if (above_size < 5):
+    #         above = find_above_neighbors(data, index, above_size)
+    #         below_size = 10 - above_size
+    #         below = find_below_neighbors(data, index, below_size)
+    #     elif (below_size < 5):
+    #         below = find_below_neighbors(data, index, below_size)
+    #         above_size = 10 - below_size
+    #         above = find_above_neighbors(data, index, above_size)
+    #     else:
+    #         below = find_below_neighbors(data, index, below_size)
+    #         above = find_above_neighbors(data, index, above_size)
 
         
     finally:
         if conn:
             conn.close()
 
-    return data[index], above, below
+    # return data[index], above, below
 
