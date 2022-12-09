@@ -240,8 +240,8 @@ def growth():
 def generate_eps():
     return str(round(random.uniform(0, 10)))
 
-write_csv(50)
-db_path = os.path.abspath('stonks.db')
+#write_csv(50)
+db_path = os.path.abspath('stonks/stonks.db')
 create_connection(db_path)
 
 # sqlite3 stonks.db < schema.sql // OSX and Linux
