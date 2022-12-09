@@ -103,11 +103,12 @@ def init_edges(db_file, net, id, sort, depth, k):
         
         init_edges(db_file, net, data[1], sort, depth-1, k)
     
+        return src
+    except IndexError:
+        print('Empty')
     finally:
         if conn:
             conn.close()
-
-    return src
 
 
 def get_inds(db_file, id, sort, k):
