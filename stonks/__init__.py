@@ -37,7 +37,7 @@ def create_app(test_config=None):
     network = Network(height="100vh", neighborhood_highlight=True)
     network.toggle_physics(True)
     from . import net
-    net.init_network(db_path, net=network, id='IAT', sort='volume')
+    net.init_network(db_path, net=network, id='TRON', sort='volume', depth=10)
 
     return app
 

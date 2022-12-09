@@ -6,7 +6,7 @@ import sqlite3
 import urllib3
 from scipy import spatial
 import numpy as np
-
+import itertools
 
 # 1. logo, 2. ticker, 3. pe, 4. volume, 5. price, 6. market_cap, 7. eps, 8. sector, 9. employees, 10. revenue, 11. growth, 12. profit
 
@@ -61,23 +61,31 @@ class Node():
             return self.profit
 
 
-def init_network(db_file, net, id, sort):
+def init_network(db_file, net, id, sort, depth):
     template_path = os.path.abspath('stonks/templates')
     write_path = os.path.join(template_path, 'mygraph.html')
 
+    try:
+        init_edges(db_file, net, id, sort, depth)
+        net.write_html(write_path)
+    except (OSError, FileNotFoundError):
+        print('Error')
+        
+
+def init_edges(db_file, net, id, sort, depth):
     conn = None
     try:
+        if depth == 0:
+            return
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
-
-        #source node
         query = "SELECT * FROM stock WHERE ticker = '" + id + "'"
         cursor.execute(query)
-        data = cursor.fetchall()[0]
+        data = cursor.fetchall()
+        data = list(itertools.chain(*data))
         src = Node(data)
-        #print("SRC:", src.ticker)
+        
         net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo)
-
         inds = get_inds(db_file, id, sort)
 
         for i in inds:
@@ -88,28 +96,21 @@ def init_network(db_file, net, id, sort):
             data = [j for j in cursor.fetchall()[0]]
             newNode = Node(data)
             net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
-            diff = abs(newNode.getVal(sort) - src.getVal(sort))
             net.add_edge(src.ticker, newNode.ticker)
-
-        # adjList = net.get_adj_list()
-        # print(adjList)
-
-    finally:
-        try:
-            net.write_html(write_path)
-            if conn:
-                conn.close()
-        except (OSError, FileNotFoundError):
-            print('Error')
         
+        init_edges(db_file, net, data[1], sort, depth-1)
+    
+    finally:
+        if conn:
+            conn.close()
+
 
 def get_inds(db_file, id, sort):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
-        get_data = "SELECT volume FROM stock "
-        get_data = get_data + sort
+        get_data = "SELECT " + sort + " FROM stock "
         cursor.execute(get_data)
         data = np.asarray(cursor.fetchall())
         
@@ -119,13 +120,11 @@ def get_inds(db_file, id, sort):
         tree = spatial.KDTree(data)
         k = 6
         _, inds = tree.query(id_v, k)
-
-        print()
-        print(inds)
         return inds.reshape(-1)[1:]
     finally:
         if conn:
             conn.close()
+
 
 def bfs(src, net):
     # BASED ON STEPIK SOLUTIONS MODULE 7
@@ -172,9 +171,9 @@ void bfs(const Graph& graph, int src)
     } 
 } 
 """
-net = Network(height="100vh", neighborhood_highlight=True)
-net.toggle_physics(True)
+# net = Network(height="100vh", neighborhood_highlight=True)
+# net.toggle_physics(True)
 
-db_path = os.path.abspath('stonks/stonks.db')
-init_network(db_path, net, 'IAT', 'volume')
-bfs(net=net, src='IAT')
+# db_path = os.path.abspath('stonks/stonks.db')
+# init_network(db_path, net, 'IAT', 'volume')
+# bfs(net=net, src='IAT')
