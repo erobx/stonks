@@ -88,8 +88,8 @@
                   
 
                   // parsing and collecting nodes and edges from the python
-                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "DTF", "image": "https://logo.clearbit.com/dtffund.com", "label": "DTF", "shape": "image"}, {"color": "#97c2fc", "id": "GBAB", "image": "static/images/stonks.jpeg", "label": "GBAB", "shape": "image"}, {"color": "#97c2fc", "id": "DVYA", "image": "static/images/stonks.jpeg", "label": "DVYA", "shape": "image"}, {"color": "#97c2fc", "id": "XC", "image": "static/images/stonks.jpeg", "label": "XC", "shape": "image"}, {"color": "#97c2fc", "id": "BLDP", "image": "https://logo.clearbit.com/ballard.com", "label": "BLDP", "shape": "image"}, {"color": "#97c2fc", "id": "ACRV", "image": "https://logo.clearbit.com/acrivon.com", "label": "ACRV", "shape": "image"}]);
-                  edges = new vis.DataSet([{"from": "DTF", "to": "GBAB"}, {"from": "DTF", "to": "DVYA"}, {"from": "DTF", "to": "XC"}, {"from": "DTF", "to": "BLDP"}, {"from": "DTF", "to": "ACRV"}]);
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "TRON", "image": "https://logo.clearbit.com/cgac2.cornergrowth.com", "label": "TRON", "shape": "image"}, {"color": "#97c2fc", "id": "CMCL", "image": "https://logo.clearbit.com/caledoniamining.com", "label": "CMCL", "shape": "image"}, {"color": "#97c2fc", "id": "PFLT", "image": "static/images/stonks.jpeg", "label": "PFLT", "shape": "image"}, {"color": "#97c2fc", "id": "GTN", "image": "https://logo.clearbit.com/gray.tv", "label": "GTN", "shape": "image"}, {"color": "#97c2fc", "id": "PSO", "image": "https://logo.clearbit.com/plc.pearson.com", "label": "PSO", "shape": "image"}]);
+                  edges = new vis.DataSet([{"from": "TRON", "to": "CMCL"}, {"from": "TRON", "to": "PFLT"}, {"from": "CMCL", "to": "GTN"}, {"from": "GTN", "to": "PSO"}]);
 
                   nodeColors = {};
                   allNodes = nodes.get({ returnType: "Object" });
@@ -137,6 +137,8 @@
 
                   network = new vis.Network(container, data, options);
 
+                  
+                    network.on("click", neighbourhoodHighlight);
                   
 
                   

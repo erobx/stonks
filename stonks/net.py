@@ -94,6 +94,8 @@ def init_edges(db_file, net, id, sort, depth, k):
             data = cursor.fetchall()
             data = list(itertools.chain(*data))
             newNode = Node(data)
+            if newNode.ticker == src.ticker:
+                continue
             net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
             net.add_edge(src.ticker, newNode.ticker)
         
@@ -111,8 +113,9 @@ def get_inds(db_file, id, sort, k):
         cursor = conn.cursor()
         get_data = "SELECT " + sort + " FROM stock "
         cursor.execute(get_data)
-        data = np.asarray(cursor.fetchall())
-        data = data.reshape(len(data))
+        data = cursor.fetchall()
+        data = list(itertools.chain(*data))
+        data = np.asarray(data, dtype=float).reshape(len(data))
         
         query = "SELECT + " + sort + " FROM stock WHERE ticker = '" + id + "'"
         cursor.execute(query)
