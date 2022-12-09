@@ -7,6 +7,7 @@ import urllib3
 from scipy import spatial
 import numpy as np
 import itertools
+from queue import Queue, LifoQueue
 
 # 1. logo, 2. ticker, 3. pe, 4. volume, 5. price, 6. market_cap, 7. eps, 8. sector, 9. employees, 10. revenue, 11. growth, 12. profit
 
@@ -67,7 +68,6 @@ def init_network(db_file, net, id, sort, depth, k):
 
     try:
         init_edges(db_file, net, id, sort, depth, k)
-        bfs(net=net, src=id)
         net.write_html(write_path)
     except (OSError, FileNotFoundError):
         print('Wrote HTML')
@@ -86,7 +86,7 @@ def init_edges(db_file, net, id, sort, depth, k):
         data = list(itertools.chain(*data))
         src = Node(data)
         
-        net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo)
+        net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo, size=10)
         inds = get_inds(db_file, id, sort, k + 1)
 
 
@@ -98,7 +98,7 @@ def init_edges(db_file, net, id, sort, depth, k):
             newNode = Node(data)
             if newNode.ticker == src.ticker:
                 continue
-            net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
+            net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo, size=10)
             net.add_edge(src.ticker, newNode.ticker)
             #print(src.ticker,"------>", newNode.ticker)
         
@@ -135,41 +135,45 @@ def get_inds(db_file, id, sort, k):
 
 def bfs(src, net):
     # BASED ON STEPIK SOLUTIONS MODULE 7
-    queue = []
+    q = Queue(maxsize=0)
     visitied = []
+    bfs = []
 
     visitied.append(src)
-    queue.append(src)
+    q.put(src)
 
-    #print(net.get_adj_list())
+    while(q.empty() != True):
+        current = q.get()
+        bfs.append(current)
 
+        for n in net.neighbors(current):
+            if (n not in visitied):
+                visitied.append(n)
+                q.put(n)
+
+    return bfs
+
+def dfs(src, net):
+    # BASED ON STEPIK SOLUTIONS MODULE 7
+    s = LifoQueue(maxsize=0)
+    visitied = []
+    dfs = []
+
+    visitied.append(src)
+    s.put(src)
+
+    while(s.empty() != True):
+        current = s.get()
+        dfs.append(current)
+
+        for n in net.neighbors(current):
+            if (n not in visitied):
+                visitied.append(n)
+                s.put(n)
+
+    return dfs
     
-"""
-void bfs(const Graph& graph, int src)  
-{ 
-    vector<bool> visited(graph.numVertices); 
-    queue<int> q; 
- 
-    visited[src] = true; 
-    q.push(src); 
-     
-    while (!q.empty())  
-    { 
-        int u = q.front(); 
-        cout << u << " "; 
-        q.pop(); 
-         
-        for (int v : graph.adjList[u])  
-        { 
-            if (!visited[v])  
-            { 
-                visited[v] = true; 
-                q.push(v); 
-            } 
-        } 
-    } 
-} 
-"""
+
 net = Network(height="100vh", neighborhood_highlight=True)
 net.toggle_physics(True)
 
