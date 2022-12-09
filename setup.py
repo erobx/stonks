@@ -21,9 +21,6 @@ setup(
         'html5lib',
         'numpy',
         'pandas',
-        'sqlite3',
-        'itertools',
         'urllib3',
-        
     ],
 )

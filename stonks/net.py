@@ -178,9 +178,3 @@ def dfs(src, net):
 
     return dfs, time.time() - t
     
-
-net = Network(height="100vh", neighborhood_highlight=True)
-net.toggle_physics(True)
-
-db_path = os.path.abspath('stonks/stonks.db')
-#src = init_network(db_path, net=net, id='TRON', sort='volume', depth=10, k=10)
