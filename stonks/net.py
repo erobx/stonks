@@ -31,7 +31,7 @@ class Node():
         self.employees = info[8]
         self.revenue = info[9]
         self.growth = info[10]
-        self.profit = info[11]
+        self.profit = info[11]  
 
     def getVal(self, sort):
         if sort == 'logo':
@@ -66,6 +66,7 @@ def init_network(db_file, net, id, sort, depth, k):
 
     try:
         init_edges(db_file, net, id, sort, depth, k)
+        bfs(net=net, src=id)
         net.write_html(write_path)
     except (OSError, FileNotFoundError):
         print('Wrote HTML')
@@ -85,7 +86,8 @@ def init_edges(db_file, net, id, sort, depth, k):
         src = Node(data)
         
         net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo)
-        inds = get_inds(db_file, id, sort, k)
+        inds = get_inds(db_file, id, sort, k + 1)
+
 
         for i in inds:
             query = "SELECT * FROM stock WHERE " + sort + " = " + str(i)
@@ -97,12 +99,15 @@ def init_edges(db_file, net, id, sort, depth, k):
                 continue
             net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
             net.add_edge(src.ticker, newNode.ticker)
+            #print(src.ticker,"------>", newNode.ticker)
         
         init_edges(db_file, net, data[1], sort, depth-1, k)
     
     finally:
         if conn:
             conn.close()
+
+    return src
 
 
 def get_inds(db_file, id, sort, k):
@@ -135,17 +140,9 @@ def bfs(src, net):
     visitied.append(src)
     queue.append(src)
 
-    for n in net.neighbors(src):
-        queue.append(n)
+    #print(net.get_adj_list())
 
-    print(queue)
-
-    # while(queue == False):
-    #     print('len:', len(queue))
-    #     queue.
-
-
-
+    
 """
 void bfs(const Graph& graph, int src)  
 { 
@@ -176,5 +173,4 @@ net = Network(height="100vh", neighborhood_highlight=True)
 net.toggle_physics(True)
 
 db_path = os.path.abspath('stonks/stonks.db')
-init_network(db_path, net, 'TRON', 'price', 10, 5)
-# bfs(net=net, src='IAT')
+#src = init_network(db_path, net=net, id='TRON', sort='volume', depth=10, k=10)
