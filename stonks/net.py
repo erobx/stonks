@@ -153,6 +153,7 @@ def bfs(src, net):
 
     return bfs
 
+
 def dfs(src, net):
     # BASED ON STEPIK SOLUTIONS MODULE 7
     s = LifoQueue(maxsize=0)

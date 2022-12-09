@@ -56,6 +56,9 @@ def number_format(value):
         elif (value[-1] == 'K'):
             value = value[:-1]
             value = float(value) * 10**3
+        elif (value[-1] == 'T'):
+            value = value[:-1]
+            value = float(value) * 10**12
 
     return(str(value))
                 
