@@ -61,18 +61,18 @@ class Node():
             return self.profit
 
 
-def init_network(db_file, net, id, sort, depth):
+def init_network(db_file, net, id, sort, depth, k):
     template_path = os.path.abspath('stonks/templates')
     write_path = os.path.join(template_path, 'mygraph.html')
 
     try:
-        init_edges(db_file, net, id, sort, depth)
+        init_edges(db_file, net, id, sort, depth, k)
         net.write_html(write_path)
     except (OSError, FileNotFoundError):
-        print('Error')
+        print('Wrote HTML')
         
 
-def init_edges(db_file, net, id, sort, depth):
+def init_edges(db_file, net, id, sort, depth, k):
     conn = None
     try:
         if depth == 0:
@@ -86,26 +86,25 @@ def init_edges(db_file, net, id, sort, depth):
         src = Node(data)
         
         net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo)
-        inds = get_inds(db_file, id, sort)
+        inds = get_inds(db_file, id, sort, k)
 
         for i in inds:
-            if i == 0:
-                continue
-            query = "SELECT * FROM stock WHERE rowid = " + str(i)
+            query = "SELECT * FROM stock WHERE " + sort + " = " + str(i)
             cursor.execute(query)
-            data = [j for j in cursor.fetchall()[0]]
+            data = cursor.fetchall()
+            data = list(itertools.chain(*data))
             newNode = Node(data)
             net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
             net.add_edge(src.ticker, newNode.ticker)
         
-        init_edges(db_file, net, data[1], sort, depth-1)
+        init_edges(db_file, net, data[1], sort, depth-1, k)
     
     finally:
         if conn:
             conn.close()
 
 
-def get_inds(db_file, id, sort):
+def get_inds(db_file, id, sort, k):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -113,14 +112,14 @@ def get_inds(db_file, id, sort):
         get_data = "SELECT " + sort + " FROM stock "
         cursor.execute(get_data)
         data = np.asarray(cursor.fetchall())
+        data = data.reshape(len(data))
         
         query = "SELECT + " + sort + " FROM stock WHERE ticker = '" + id + "'"
         cursor.execute(query)
         id_v = np.asarray(cursor.fetchall())
-        tree = spatial.KDTree(data)
-        k = 6
-        _, inds = tree.query(id_v, k)
-        return inds.reshape(-1)[1:]
+        inds = np.argsort(abs(data-id_v))
+
+        return data[inds[0]][1:k]
     finally:
         if conn:
             conn.close()
@@ -171,9 +170,9 @@ void bfs(const Graph& graph, int src)
     } 
 } 
 """
-# net = Network(height="100vh", neighborhood_highlight=True)
-# net.toggle_physics(True)
+net = Network(height="100vh", neighborhood_highlight=True)
+net.toggle_physics(True)
 
-# db_path = os.path.abspath('stonks/stonks.db')
-# init_network(db_path, net, 'IAT', 'volume')
+db_path = os.path.abspath('stonks/stonks.db')
+init_network(db_path, net, 'TRON', 'price', 10, 5)
 # bfs(net=net, src='IAT')
