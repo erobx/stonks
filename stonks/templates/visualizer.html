@@ -23,28 +23,28 @@
                     <h5>Sort By: </h5>
 
                     <label class="radio-inline">
-                        <input type="radio" name="optradio" id="pe" checked> P/E Ratio
+                        <input type="radio" name="optradio" id="pe" value="pe" checked> P/E Ratio
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="optradio" id="market_cap"> Market Cap
+                        <input type="radio" name="optradio" id="market_cap" value="market_cap"> Market Cap
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="optradio" id="price"> Price
+                        <input type="radio" name="optradio" id="price" value="price"> Price
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="optradio" id="employees"> Employees
+                        <input type="radio" name="optradio" id="employees" value="employees"> Employees
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="optradio" id="volume"> Volume
+                        <input type="radio" name="optradio" id="volume" value="volume"> Volume
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="optradio" id="eps"> EPS
+                        <input type="radio" name="optradio" id="eps" value="eps"> EPS
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="optradio" id="revenue"> Revenue
+                        <input type="radio" name="optradio" id="revenue" value="revenue"> Revenue
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="optradio" id="profit"> Profit
+                        <input type="radio" name="optradio" id="profit" value="profit">  Profit
                     </label>
 
                     <br>
@@ -53,15 +53,30 @@
                   </form>
             
             <!-- ADD IF TICKER STATEMENTS :: DISPLAY INFO -->
-            <div class="info-div">
-                <h2 class="info-h2"> {{ ticker }} Info: </h2>
-                    <h3 class="info-h3"> Price: {{ price }}</h3>
-                    <h3 class="info-h3"> P/E: {{ pe }}</h3>
-                    <h3 class="info-h3"> Volume: {{ volume }}</h3>
-                    <h3 class="info-h3"> Market Cap: {{ mCap }}</h3>
-                    <h3 class="info-h3"> More? </h3>
-                    
+            {% if ticker %}
+                <div class="info-div">
+                    <h2 class="info-h2"> {{ ticker }} Info: </h2>
+                        <h5 class="info-h5"> Sector: {{ sector }}</h5>
+                        <h5 class="info-h5"> Price: {{ price }}</h5>
+                        <h5 class="info-h5"> P/E Ratio: {{ pe }}</h5>
+                        <h5 class="info-h5"> Volume: {{ volume }}</h5>
+                        <h5 class="info-h5"> Employees: {{ employees }}</h5>
+                        <h5 class="info-h5"> EPS: {{ eps }}</h5>
+                        <h5 class="info-h5"> Revenue: {{ revenue }}</h5>
+                        <h5 class="info-h5"> Growth: {{ growth }}</h5>
+                        <h5 class="info-h5"> Profit: {{ profit }}</h5>
+                        <details>
+                            <summary>BFS List</summary>
+                            <span> {{ bfsTime }} 
+                                {{ bfs }}</span>
+                        </details>
+                        <details>
+                            <summary>DFS List</summary>
+                            <span> {{ dfsTime }} {{ dfs }}</span>
+                        </details>
+            {% endif %}
 
+                    
             </div>
         </div>
     

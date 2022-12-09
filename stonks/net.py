@@ -7,6 +7,7 @@ import urllib3
 import numpy as np
 import itertools
 from queue import Queue, LifoQueue
+import time
 
 # 1. logo, 2. ticker, 3. pe, 4. volume, 5. price, 6. market_cap, 7. eps, 8. sector, 9. employees, 10. revenue, 11. growth, 12. profit
 
@@ -66,10 +67,11 @@ def init_network(db_file, net, id, sort, depth, k):
     write_path = os.path.join(template_path, 'mygraph.html')
 
     try:
-        init_edges(db_file, net, id, sort, depth, k)
+        src = init_edges(db_file, net, id, sort, depth, k)
         net.write_html(write_path)
     except (OSError, FileNotFoundError):
         print('Wrote HTML')
+        return src
         
 
 def init_edges(db_file, net, id, sort, depth, k):
@@ -101,7 +103,7 @@ def init_edges(db_file, net, id, sort, depth, k):
             net.add_edge(src.ticker, newNode.ticker)
             #print(src.ticker,"------>", newNode.ticker)
         
-        init_edges(db_file, net, data[1], sort, depth-1, k)
+        init_edges(db_file, net, data[1], sort, depth-1, k + 1)
     
         return src
     except IndexError:
@@ -135,6 +137,7 @@ def get_inds(db_file, id, sort, k):
 
 def bfs(src, net):
     # BASED ON STEPIK SOLUTIONS MODULE 7
+    t = time.time()
     q = Queue(maxsize=0)
     visitied = []
     bfs = []
@@ -151,11 +154,12 @@ def bfs(src, net):
                 visitied.append(n)
                 q.put(n)
 
-    return bfs
+    return bfs, time.time() - t
 
 
 def dfs(src, net):
     # BASED ON STEPIK SOLUTIONS MODULE 7
+    t = time.time()
     s = LifoQueue(maxsize=0)
     visitied = []
     dfs = []
@@ -172,7 +176,7 @@ def dfs(src, net):
                 visitied.append(n)
                 s.put(n)
 
-    return dfs
+    return dfs, time.time() - t
     
 
 net = Network(height="100vh", neighborhood_highlight=True)

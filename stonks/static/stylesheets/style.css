@@ -40,6 +40,10 @@ body {
 
 }
 
+.info-h2 {
+    text-decoration: underline;
+}
+
 /* components */
 
 .stonks-button {
@@ -109,7 +113,7 @@ body {
 
 .info-div {
     background-color: white;
-    height: 80%;
+    height: 66%;
     overflow-x: hidden;
     overflow-y: auto;
     border: 2px solid #4b5560;

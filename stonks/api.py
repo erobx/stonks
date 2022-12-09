@@ -243,9 +243,13 @@ def growth():
 def generate_eps():
     return str(round(random.uniform(0, 10)))
 
+
+
 #write_csv(50)
 db_path = os.path.abspath('stonks/stonks.db')
 create_connection(db_path)
+
+# Run following commands to create database file from schema
 
 # sqlite3 stonks.db < schema.sql // OSX and Linux
 # sqlite3 -init schema.sql stonks.db // Powershell
