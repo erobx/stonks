@@ -18,10 +18,39 @@
 
         <div class="side-menu-div">   
             <h2 class="ticker-h2"> Stock Ticker </h2>
-                <div class="input-div"> 
-                    <input class="ticker-text-input" type="text" id="ticker" name="ticker" placeholder="e.g. 'APPL'">
+                <form class="input-div" method="POST">
+                    <input class="ticker-text-input" type="text" id="ticker" name="ticker" placeholder="e.g. 'AAPL'">
+                    <h5>Sort By: </h5>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="optradio" id="pe" checked> P/E Ratio
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="optradio" id="market_cap"> Market Cap
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="optradio" id="price"> Price
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="optradio" id="employees"> Employees
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="optradio" id="volume"> Volume
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="optradio" id="eps"> EPS
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="optradio" id="revenue"> Revenue
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="optradio" id="profit"> Profit
+                    </label>
+
+                    <br>
                     <input class="ticker-submit-input" type="submit" value="Submit">
-                </div>
+                    
+                  </form>
             
             <!-- ADD IF TICKER STATEMENTS :: DISPLAY INFO -->
             <div class="info-div">
