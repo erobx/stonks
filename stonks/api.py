@@ -189,7 +189,7 @@ def get_data(n):
 
 def write_csv(n):
     rows = get_data(n)
-    with open('tickers.csv', 'w+', newline='') as f:
+    with open('tickers.csv', 'w+', newline='', encoding='UTF-8') as f:
         writer = csv.writer(f)
         # writer.writerow(headers) # not necessary
         writer.writerows(rows)

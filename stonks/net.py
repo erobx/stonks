@@ -61,12 +61,9 @@ class Node():
             return self.profit
 
 
-def init_network(db_file, id, sort):
+def init_network(db_file, net, id, sort):
     template_path = os.path.abspath('stonks/templates')
     write_path = os.path.join(template_path, 'mygraph.html')
-    print(write_path)
-    net = Network(height="100vh", neighborhood_highlight=True)
-    net.toggle_physics(True)
 
     conn = None
     try:
@@ -91,8 +88,11 @@ def init_network(db_file, id, sort):
             data = [j for j in cursor.fetchall()[0]]
             newNode = Node(data)
             net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
-            #diff = abs(newNode.getVal(sort) - src.getVal(sort))
+            diff = abs(newNode.getVal(sort) - src.getVal(sort))
             net.add_edge(src.ticker, newNode.ticker)
+
+        # adjList = net.get_adj_list()
+        # print(adjList)
 
     finally:
         try:
@@ -119,11 +119,62 @@ def get_inds(db_file, id, sort):
         tree = spatial.KDTree(data)
         k = 6
         _, inds = tree.query(id_v, k)
+
+        print()
+        print(inds)
         return inds.reshape(-1)[1:]
     finally:
         if conn:
             conn.close()
 
+def bfs(src, net):
+    # BASED ON STEPIK SOLUTIONS MODULE 7
+    queue = []
+    visitied = []
 
-# db_path = os.path.abspath('stonks/stonks.db')
-# init_network(db_path, 'DTF', 'volume')
+    visitied.append(src)
+    queue.append(src)
+
+    for n in net.neighbors(src):
+        queue.append(n)
+
+    print(queue)
+
+    # while(queue == False):
+    #     print('len:', len(queue))
+    #     queue.
+
+
+
+"""
+void bfs(const Graph& graph, int src)  
+{ 
+    vector<bool> visited(graph.numVertices); 
+    queue<int> q; 
+ 
+    visited[src] = true; 
+    q.push(src); 
+     
+    while (!q.empty())  
+    { 
+        int u = q.front(); 
+        cout << u << " "; 
+        q.pop(); 
+         
+        for (int v : graph.adjList[u])  
+        { 
+            if (!visited[v])  
+            { 
+                visited[v] = true; 
+                q.push(v); 
+            } 
+        } 
+    } 
+} 
+"""
+net = Network(height="100vh", neighborhood_highlight=True)
+net.toggle_physics(True)
+
+db_path = os.path.abspath('stonks/stonks.db')
+init_network(db_path, net, 'IAT', 'volume')
+bfs(net=net, src='IAT')
