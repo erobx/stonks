@@ -26,19 +26,13 @@ def create_app(test_config=None):
         return render_template("index.html")
 
     db_path = os.path.abspath('stonks/stonks.db')
-    
+    network = Network(height="100vh", neighborhood_highlight=True)
+    network.toggle_physics(True)
     from . import net
-    
+
     # route to visualizer page
-    @app.route("/visualizer", methods=["GET", "POST"])
+    @app.route("/visualizer", methods=["POST"])
     def visualizer():
-        if request.method == "POST":
-            ticker = request.form['ticker']
-            sort = request.form['optradio']
-            network = Network(height="100vh", neighborhood_highlight=True)
-            network.toggle_physics(True)
-            net.init_network(db_path, net=network, id=ticker, sort=sort, depth=10, k=10)
-            
         return render_template("visualizer.html")
 
 
