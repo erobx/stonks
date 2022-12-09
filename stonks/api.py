@@ -180,9 +180,6 @@ def get_data(n):
             else:
                 values.append(fabricate())
             
-        # t2 = time.time()
-        # t3 = t2-t1
-        # total_time += t3
         rows.append(values)
 
     rows = np.asarray(rows)

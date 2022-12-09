@@ -7,6 +7,7 @@ import urllib3
 from scipy import spatial
 import numpy as np
 
+
 # 1. logo, 2. ticker, 3. pe, 4. volume, 5. price, 6. market_cap, 7. eps, 8. sector, 9. employees, 10. revenue, 11. growth, 12. profit
 
 
@@ -33,12 +34,38 @@ class Node():
         self.growth = info[10]
         self.profit = info[11]
 
+    def getVal(self, sort):
+        if sort == 'logo':
+            return self.logo
+        if sort == 'ticker':
+            return self.ticker
+        if sort == 'pe':
+            return self.pe
+        if sort == 'volume':
+            return self.volume
+        if sort == 'price':
+            return self.price
+        if sort == 'market_cap':
+            return self.market_cap
+        if sort == 'eps':
+            return self.eps
+        if sort == 'sector':
+            return self.sector
+        if sort == 'employees':
+            return self.employees
+        if sort == 'revenue':
+            return self.revenue
+        if sort == 'growth':
+            return self.growth
+        if sort == 'profit':
+            return self.profit
+
 
 def init_network(db_file, id, sort):
     template_path = os.path.abspath('stonks/templates')
     write_path = os.path.join(template_path, 'mygraph.html')
     print(write_path)
-    net = Network(height="100vh")
+    net = Network(height="100vh", neighborhood_highlight=True)
     net.toggle_physics(True)
 
     conn = None
@@ -64,6 +91,7 @@ def init_network(db_file, id, sort):
             data = [j for j in cursor.fetchall()[0]]
             newNode = Node(data)
             net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
+            #diff = abs(newNode.getVal(sort) - src.getVal(sort))
             net.add_edge(src.ticker, newNode.ticker)
 
     finally:
