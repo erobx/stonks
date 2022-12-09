@@ -2,14 +2,13 @@ from pyvis.network import Network
 import sys
 sys.path.append('../p3')
 import os.path
-import query
+import sqlite3
 import urllib3
-import http
+from scipy import spatial
+import numpy as np
+import itertools
 
 # 1. logo, 2. ticker, 3. pe, 4. volume, 5. price, 6. market_cap, 7. eps, 8. sector, 9. employees, 10. revenue, 11. growth, 12. profit
-
-# for i,a in enumerate(above):
-#     print(above[len(above)- i - 1])
 
 
 class Node():
@@ -19,7 +18,6 @@ class Node():
         else:
             http = urllib3.PoolManager()
             error = http.request('GET', info[0])
-            print(error.status)
             if (error.status == 404):
                 self.logo = 'static/images/stonks.jpeg'
             else:
@@ -36,47 +34,146 @@ class Node():
         self.growth = info[10]
         self.profit = info[11]
 
-template_path = os.path.abspath('stonks/templates')
-write_path = os.path.join(template_path, 'mygraph.html')
-
-def init_network():
-    srcData, above, below = query.get_node_data('stonks.db', 'SMP', 'volume')
-    aboveNodeList = []
-    belowNodeList = []
-    net = Network(height="100vh")
-    net.toggle_physics(True)
-
-    #source node
-    src = Node(srcData)
-    print("SRC:", src.ticker)
-    n = net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo)
-    aboveNodeList.append(src.ticker)
-    belowNodeList.append(src.ticker)
-
-    for i in range(len(above)):
-        newNode = Node(above[len(above)- i - 1])
-        aboveNodeList.append(newNode.ticker)
-        net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
-        net.add_edge(aboveNodeList[i], aboveNodeList[i+1])
-        print("ADDED EDGE FROM", aboveNodeList[i], "--->", aboveNodeList[i+1])
-
-
-    ####### TO FIX ##############
-    # for i in range(len(below)):
-    #     newNode = Node(above[len(above)- i - 1])
-    #     aboveNodeList.append(newNode.ticker)
-    #     net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
-    #     net.add_edge(aboveNodeList[i], aboveNodeList[i+1])
-    #     print("ADDED EDGE FROM", aboveNodeList[i], "--->", aboveNodeList[i+1])
+    def getVal(self, sort):
+        if sort == 'logo':
+            return self.logo
+        if sort == 'ticker':
+            return self.ticker
+        if sort == 'pe':
+            return self.pe
+        if sort == 'volume':
+            return self.volume
+        if sort == 'price':
+            return self.price
+        if sort == 'market_cap':
+            return self.market_cap
+        if sort == 'eps':
+            return self.eps
+        if sort == 'sector':
+            return self.sector
+        if sort == 'employees':
+            return self.employees
+        if sort == 'revenue':
+            return self.revenue
+        if sort == 'growth':
+            return self.growth
+        if sort == 'profit':
+            return self.profit
 
 
-    #net.generate_html(write_path)
+def init_network(db_file, net, id, sort, depth):
+    template_path = os.path.abspath('stonks/templates')
+    write_path = os.path.join(template_path, 'mygraph.html')
+
     try:
+        init_edges(db_file, net, id, sort, depth)
         net.write_html(write_path)
     except (OSError, FileNotFoundError):
-        print('')
-    #net.set_template_dir(template_path, 'mygraph.html')
+        print('Error')
+        
+
+def init_edges(db_file, net, id, sort, depth):
+    conn = None
+    try:
+        if depth == 0:
+            return
+        conn = sqlite3.connect(db_file)
+        cursor = conn.cursor()
+        query = "SELECT * FROM stock WHERE ticker = '" + id + "'"
+        cursor.execute(query)
+        data = cursor.fetchall()
+        data = list(itertools.chain(*data))
+        src = Node(data)
+        
+        net.add_node(src.ticker, label=src.ticker, shape="image", image=src.logo)
+        inds = get_inds(db_file, id, sort)
+
+        for i in inds:
+            if i == 0:
+                continue
+            query = "SELECT * FROM stock WHERE rowid = " + str(i)
+            cursor.execute(query)
+            data = [j for j in cursor.fetchall()[0]]
+            newNode = Node(data)
+            net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo)
+            net.add_edge(src.ticker, newNode.ticker)
+        
+        init_edges(db_file, net, data[1], sort, depth-1)
+    
+    finally:
+        if conn:
+            conn.close()
 
 
-#init_network()
+def get_inds(db_file, id, sort):
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+        cursor = conn.cursor()
+        get_data = "SELECT " + sort + " FROM stock "
+        cursor.execute(get_data)
+        data = np.asarray(cursor.fetchall())
+        
+        query = "SELECT + " + sort + " FROM stock WHERE ticker = '" + id + "'"
+        cursor.execute(query)
+        id_v = np.asarray(cursor.fetchall())
+        tree = spatial.KDTree(data)
+        k = 6
+        _, inds = tree.query(id_v, k)
+        return inds.reshape(-1)[1:]
+    finally:
+        if conn:
+            conn.close()
 
+
+def bfs(src, net):
+    # BASED ON STEPIK SOLUTIONS MODULE 7
+    queue = []
+    visitied = []
+
+    visitied.append(src)
+    queue.append(src)
+
+    for n in net.neighbors(src):
+        queue.append(n)
+
+    print(queue)
+
+    # while(queue == False):
+    #     print('len:', len(queue))
+    #     queue.
+
+
+
+"""
+void bfs(const Graph& graph, int src)  
+{ 
+    vector<bool> visited(graph.numVertices); 
+    queue<int> q; 
+ 
+    visited[src] = true; 
+    q.push(src); 
+     
+    while (!q.empty())  
+    { 
+        int u = q.front(); 
+        cout << u << " "; 
+        q.pop(); 
+         
+        for (int v : graph.adjList[u])  
+        { 
+            if (!visited[v])  
+            { 
+                visited[v] = true; 
+                q.push(v); 
+            } 
+        } 
+    } 
+} 
+"""
+# net = Network(height="100vh", neighborhood_highlight=True)
+# net.toggle_physics(True)
+
+# db_path = os.path.abspath('stonks/stonks.db')
+# init_network(db_path, net, 'IAT', 'volume')
+# bfs(net=net, src='IAT')

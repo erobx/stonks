@@ -88,8 +88,8 @@
                   
 
                   // parsing and collecting nodes and edges from the python
-                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": 0, "image": "https://logo.clearbit.com/genie.com", "label": "GNE", "shape": "image"}]);
-                  edges = new vis.DataSet([]);
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "DTF", "image": "https://logo.clearbit.com/dtffund.com", "label": "DTF", "shape": "image"}, {"color": "#97c2fc", "id": "GBAB", "image": "static/images/stonks.jpeg", "label": "GBAB", "shape": "image"}, {"color": "#97c2fc", "id": "DVYA", "image": "static/images/stonks.jpeg", "label": "DVYA", "shape": "image"}, {"color": "#97c2fc", "id": "XC", "image": "static/images/stonks.jpeg", "label": "XC", "shape": "image"}, {"color": "#97c2fc", "id": "BLDP", "image": "https://logo.clearbit.com/ballard.com", "label": "BLDP", "shape": "image"}, {"color": "#97c2fc", "id": "ACRV", "image": "https://logo.clearbit.com/acrivon.com", "label": "ACRV", "shape": "image"}]);
+                  edges = new vis.DataSet([{"from": "DTF", "to": "GBAB"}, {"from": "DTF", "to": "DVYA"}, {"from": "DTF", "to": "XC"}, {"from": "DTF", "to": "BLDP"}, {"from": "DTF", "to": "ACRV"}]);
 
                   nodeColors = {};
                   allNodes = nodes.get({ returnType: "Object" });

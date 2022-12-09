@@ -1,6 +1,3 @@
-'''
-This is to test the yfinance module and see how it structures the data
-'''
 import warnings
 warnings. simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
@@ -10,6 +7,7 @@ import numpy as np
 import yfinance as yf
 import sqlite3
 import random
+import os
 
 '''Code from: https://levelup.gitconnected.com/how-to-get-all-stock-symbols-a73925c16a1b'''
 def get_stocks():
@@ -41,6 +39,7 @@ def get_stocks():
     
     return list(sav_set)
 
+
 def number_format(value):
     if (type(value) == str):
         if (value == 'nan'):
@@ -60,9 +59,8 @@ def number_format(value):
 
     return(str(value))
                 
-tickers = get_stocks()
 
-def write_csv(n):
+def get_data(n):
     # 2
     yf_header = ['logo_url', 'ticker']
     # 5
@@ -75,10 +73,12 @@ def write_csv(n):
     si_stats_headers = ['Revenue (ttm)', 'Quarterly Revenue Growth (yoy)', 'Gross Profit (ttm)']
 
     headers = yf_header + si_quote_headers + si_info_headers + si_stats_headers
-
     rows = []
     counter = 1
-    for t in tickers[:5]:
+    tickers = get_stocks()
+
+    for t in tickers[:n]:
+        # t1 = time.time()
         if (t.find('$') != -1):
             print("INVALID TICKER")
             continue
@@ -88,8 +88,7 @@ def write_csv(n):
         elif (len(t) > 4):
             print("INVALID TICKER")
             continue
-
-        print(t, ' ', counter)
+        
         logo = yf.Ticker(t).info.get(yf_header[0])
         
         try:
@@ -119,6 +118,7 @@ def write_csv(n):
             print('KeyError')
             continue
 
+        print(t, ' ', counter)
         counter += 1
         if logo == '':
             values = ['none', t]
@@ -184,13 +184,18 @@ def write_csv(n):
 
     rows = np.asarray(rows)
     rows = np.reshape(rows, (len(rows), len(headers)))
+    return rows
 
-    with open('tickers.csv', 'w+', newline='') as f:
+
+def write_csv(n):
+    rows = get_data(n)
+    with open('tickers.csv', 'w+', newline='', encoding='UTF-8') as f:
         writer = csv.writer(f)
         # writer.writerow(headers) # not necessary
         writer.writerows(rows)
 
     f.close()
+
 
 def create_connection(db_file):
     """ create a database connection to a SQLite database """
@@ -209,29 +214,35 @@ def create_connection(db_file):
         if conn:
             conn.close()
 
+
 def fabricate():
     n = 1_000_000
     m = 50_000_000
     return str(round(random.randint(n, m)))
+
 
 def generate_pe():
     n = 1.
     m = 20.
     return str(round(random.uniform(n, m)))
 
+
 def generate_emp():
     n = 1000
     m = 20000
     return str(round(random.randint(n,m)))
 
+
 def growth():
     return str(round(random.random())*100) + '%'
+
 
 def generate_eps():
     return str(round(random.uniform(0, 10)))
 
-write_csv(20)
-create_connection('stonks.db')
+write_csv(50)
+db_path = os.path.abspath('stonks.db')
+create_connection(db_path)
 
-# sqlite3 stonks.db < test.sql // OSX and Linux
-# sqlite3 -init test.sql stonks.db // Powershell
+# sqlite3 stonks.db < schema.sql // OSX and Linux
+# sqlite3 -init schema.sql stonks.db // Powershell
