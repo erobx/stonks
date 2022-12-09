@@ -25,19 +25,17 @@ def create_app(test_config=None):
     def index():
         return render_template("index.html")
 
+    db_path = os.path.abspath('stonks/stonks.db')
+    network = Network(height="100vh", neighborhood_highlight=True)
+    network.toggle_physics(True)
+    from . import net
+    src = net.init_network(db_path, net=network, id='AAPL', sort='price', depth=10, k=10)
+
     # route to visualizer page
     @app.route("/visualizer")
     def visualizer():
         return render_template("visualizer.html")
 
-    # from . import db
-    # db.init_app(app)
-
-    db_path = os.path.abspath('stonks/stonks.db')
-    network = Network(height="100vh", neighborhood_highlight=True)
-    network.toggle_physics(True)
-    from . import net
-    net.init_network(db_path, net=network, id='TRON', sort='profit', depth=10, k=10)
 
     return app
 
