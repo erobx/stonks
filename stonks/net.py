@@ -4,7 +4,6 @@ sys.path.append('../p3')
 import os.path
 import sqlite3
 import urllib3
-from scipy import spatial
 import numpy as np
 import itertools
 
