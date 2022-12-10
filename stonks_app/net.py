@@ -101,7 +101,6 @@ def init_edges(db_file, net, id, sort, depth, k):
                 continue
             net.add_node(newNode.ticker, label=newNode.ticker, shape="image", image=newNode.logo, size=10)
             net.add_edge(src.ticker, newNode.ticker)
-            #print(src.ticker,"------>", newNode.ticker)
         
         init_edges(db_file, net, data[1], sort, depth-1, k + 1)
     
