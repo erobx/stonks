@@ -63,7 +63,7 @@ class Node():
 
 
 def init_network(db_file, net, id, sort, depth, k):
-    template_path = os.path.abspath('stonks/templates')
+    template_path = os.path.abspath('stonks_app/templates')
     write_path = os.path.join(template_path, 'mygraph.html')
 
     try:

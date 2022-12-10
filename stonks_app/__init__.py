@@ -15,7 +15,7 @@ def create_app():
     def index():
         return render_template("index.html")
 
-    db_path = os.path.abspath('stonks/stonks.db')
+    db_path = os.path.abspath('stonks_app/stonks.db')
     
     from . import net
     
