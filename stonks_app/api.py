@@ -244,5 +244,5 @@ def generate_eps():
     return str(round(random.uniform(0, 10)))
 
 
-db_path = os.path.abspath('stonks_app/stonks.db')
+db_path = os.path.abspath('stonks.db')
 create_connection(db_path)
